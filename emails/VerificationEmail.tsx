@@ -18,7 +18,7 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
     return (
         <Html lang="en" dir="ltr">
             <Head>
-                <title>Verification Code</title>
+                <title>Your Verification Code</title>
                 <Font
                     fontFamily="Roboto"
                     fallbackFontFamily="Verdana"
@@ -30,24 +30,29 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
                     fontStyle="normal"
                 />
             </Head>
-            <Preview>Here&apos;s your verification code: {otp}</Preview>
-            <Section>
-                <Row>
-                    <Heading as="h2">Hello {username},</Heading>
+            <Preview>Use your verification code to complete your registration: {otp}</Preview>
+            <Section className="bg-gray-100 p-6 rounded-lg">
+                <Row className="mb-6">
+                    <Heading as="h2" className="text-xl font-semibold text-gray-800">
+                        Hello {username},
+                    </Heading>
                 </Row>
-                <Row>
-                    <Text>
-                        Thank you for registering. Please use the following verification
-                        code to complete your registration:
+                <Row className="mb-4">
+                    <Text className="text-gray-600 text-lg">
+                        Thank you for signing up for Better ngl! To complete your registration, please use the verification code below:
                     </Text>
                 </Row>
-                <Row>
-                    <Text>{otp}</Text>
+                <Row className="text-center mb-6">
+                    <Text className="text-2xl font-bold text-gray-800 tracking-wider">{otp}</Text>
                 </Row>
-                <Row>
-                    <Text>
-                        If you did not request this code, please ignore this email.
+                <Row className="mb-4">
+                    <Text className="text-gray-600 text-base">
+                        If you did not request this code, please disregard this email.
                     </Text>
+                </Row>
+                <Row className="mt-8">
+                    <Text className="text-gray-600 text-sm">Best regards,</Text>
+                    <Text className="text-gray-600 text-sm">The Better ngl Team</Text>
                 </Row>
             </Section>
         </Html>

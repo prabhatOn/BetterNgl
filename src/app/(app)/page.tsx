@@ -20,19 +20,19 @@ export default function Home() {
     return (
         <>
             {/* Main content */}
-            <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12 bg-gray-800 text-white">
+            <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12 bg-white text-black">
                 <section className="text-center mb-8 md:mb-12">
                     <h1 className="text-3xl md:text-5xl font-bold">
-                        Dive into the World of Anonymous Feedback
+                        True Feedback: Anonymous, Secure, and Fun!
                     </h1>
                     <p className="mt-3 md:mt-4 text-base md:text-lg">
-                        True Feedback - Where your identity remains a secret.
+                        Share and receive honest feedback with enhanced privacy features.
                     </p>
                 </section>
 
                 {/* Carousel for Messages */}
                 <Carousel
-                    plugins={[Autoplay({ delay: 2000 })]}
+                    plugins={[Autoplay({ delay: 3000 })]} // Increased delay for better readability
                     className="w-full max-w-lg md:max-w-xl"
                 >
                     <CarouselContent>
@@ -59,8 +59,14 @@ export default function Home() {
             </main>
 
             {/* Footer */}
-            <footer className="text-center p-4 md:p-6 bg-gray-900 text-white">
-                © 2023 True Feedback. All rights reserved.
+            <footer className="text-center p-4 md:p-6 bg-transparent text-black">
+                <p>
+                    © 2024 True Feedback. Revolutionizing how you share thoughts and feelings anonymously.
+                </p>
+                {/* <p className="text-sm mt-2">
+                    <Link href="/privacy">Privacy Policy</Link> |{' '}
+                    <Link href="/terms">Terms of Service</Link>
+                </p> */}
             </footer>
         </>
     );
