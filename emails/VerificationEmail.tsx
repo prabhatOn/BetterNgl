@@ -39,7 +39,7 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
                 </Row>
                 <Row className="mb-4">
                     <Text className="text-gray-600 text-lg">
-                        Thank you for signing up for Better ngl! To complete your registration, please use the verification code below:
+                        Thank you for signing up for TBH To complete your registration, please use the verification code below:
                     </Text>
                 </Row>
                 <Row className="text-center mb-6">

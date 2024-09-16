@@ -23,7 +23,7 @@ export default function Home() {
             <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12 bg-white text-black">
                 <section className="text-center mb-8 md:mb-12">
                     <h1 className="text-3xl md:text-5xl font-bold">
-                        True Feedback: Anonymous, Secure, and Fun!
+                        TBH: Anonymous, Secure, and Fun!
                     </h1>
                     <p className="mt-3 md:mt-4 text-base md:text-lg">
                         Share and receive honest feedback with enhanced privacy features.
@@ -61,7 +61,7 @@ export default function Home() {
             {/* Footer */}
             <footer className="text-center p-4 md:p-6 bg-transparent text-black">
                 <p>
-                    © 2024 True Feedback. Revolutionizing how you share thoughts and feelings anonymously.
+                    © 2024 TBH. Revolutionizing how you share thoughts and feelings anonymously.
                 </p>
                 {/* <p className="text-sm mt-2">
                     <Link href="/privacy">Privacy Policy</Link> |{' '}
