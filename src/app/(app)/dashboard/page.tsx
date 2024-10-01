@@ -103,7 +103,7 @@ function UserDashboard() {
 
         const animate = () => {
             const colors = ['#f0f4f8', '#d9e2ec', '#bcccdc'].map(color => 
-                gsap.utils.random(color, gsap.utils.colorLuminance(color, 0.2))
+                gsap.utils.interpolate(color, gsap.utils.random(['#ffffff', '#000000']), 0.2)
             );
             gsap.to(bg, {
                 background: `linear-gradient(45deg, ${colors.join(', ')})`,
