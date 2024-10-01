@@ -3,7 +3,7 @@
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDebounce } from 'usehooks-ts';
 import * as z from 'zod';
@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
     Form,
+    FormControl,
     FormField,
     FormItem,
     FormLabel,
@@ -19,9 +20,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
-import { Loader2 } from 'lucide-react';
+import { Loader2, UserPlus, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signUpSchema } from '@/schemas/signUpSchema';
+import { gsap } from 'gsap';
+import InteractiveBackground from '@/components/ui/InteractiveBackground';
+import React from 'react';
 
 export default function SignUpForm() {
     const [username, setUsername] = useState('');
@@ -32,6 +36,8 @@ export default function SignUpForm() {
 
     const router = useRouter();
     const { toast } = useToast();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
 
     const form = useForm<z.infer<typeof signUpSchema>>({
         resolver: zodResolver(signUpSchema),
@@ -84,8 +90,7 @@ export default function SignUpForm() {
             const axiosError = error as AxiosError<ApiResponse>;
 
             // Default error message
-            let errorMessage = axiosError.response?.data.message;
-            ('There was a problem with your sign-up. Please try again.');
+            let errorMessage = axiosError.response?.data.message ?? 'There was a problem with your sign-up. Please try again.';
 
             toast({
                 title: 'Sign Up Failed',
@@ -97,91 +102,146 @@ export default function SignUpForm() {
         }
     };
 
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-white">
-            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-                <div className="text-center">
-                    <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-                        Join TBH
-                    </h1>
-                    <p className="mb-4">Sign up to start your anonymous adventure</p>
-                </div>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        <FormField
-                            name="username"
-                            control={form.control}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Username</FormLabel>
-                                    <Input
-                                        {...field}
-                                        onChange={(e) => {
-                                            field.onChange(e);
-                                            setUsername(e.target.value);
-                                        }}
-                                    />
-                                    {isCheckingUsername && <Loader2 className="animate-spin" />}
-                                    {!isCheckingUsername && usernameMessage && (
-                                        <p
-                                            className={`text-sm ${usernameMessage === 'Username is unique'
-                                                    ? 'text-green-500'
-                                                    : 'text-red-500'
-                                                }`}
-                                        >
-                                            {usernameMessage}
-                                        </p>
-                                    )}
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            name="email"
-                            control={form.control}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <Input {...field} name="email" />
-                                    <p className='text-muted text-gray-400 text-sm'>We will send you a verification code</p>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+    useEffect(() => {
+        const tl = gsap.timeline();
 
-                        <FormField
-                            name="password"
-                            control={form.control}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <Input type="password" {...field} name="password" />
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit" className='w-full' disabled={isSubmitting}>
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Please wait
-                                </>
-                            ) : (
-                                'Sign Up'
-                            )}
-                        </Button>
-                    </form>
-                </Form>
-                <div className="text-center mt-4">
-                    <p>
-                        Already a member?{' '}
-                        <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
-                            Sign in
-                        </Link>
-                    </p>
+        tl.fromTo(
+            containerRef.current,
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
+        );
+
+        const animateElements = formRef.current?.querySelectorAll('.animate-in');
+        if (animateElements) {
+            tl.fromTo(
+                animateElements,
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out' },
+                '-=0.5'
+            );
+        }
+
+        const hoverAnimation = gsap.to(containerRef.current, {
+            boxShadow: '0 0 30px rgba(66, 153, 225, 0.3)',
+            duration: 0.3,
+            paused: true,
+        });
+
+        const handleMouseEnter = () => hoverAnimation.play();
+        const handleMouseLeave = () => hoverAnimation.reverse();
+
+        containerRef.current?.addEventListener('mouseenter', handleMouseEnter);
+        containerRef.current?.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+            containerRef.current?.removeEventListener('mouseenter', handleMouseEnter);
+            containerRef.current?.removeEventListener('mouseleave', handleMouseLeave);
+        };
+    }, []);
+
+    return (
+        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-gray-900">
+            <InteractiveBackground />
+            <div ref={containerRef} className="w-full max-w-md relative z-10">
+                <div className="bg-gray-800 bg-opacity-40 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+                    <div className="p-8 md:p-12">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center text-blue-300 animate-in">
+                            Join TBH
+                        </h1>
+                        <p className="text-gray-300 mb-8 text-center animate-in">
+                            Sign up to start your anonymous adventure
+                        </p>
+                        <Form {...form}>
+                            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    name="username"
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className="animate-in">
+                                            <FormLabel className="text-blue-300">Username</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        setUsername(e.target.value);
+                                                    }}
+                                                    className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl"
+                                                />
+                                            </FormControl>
+                                            {isCheckingUsername && <Loader2 className="animate-spin text-blue-300" />}
+                                            {!isCheckingUsername && usernameMessage && (
+                                                <p
+                                                    className={`text-sm ${usernameMessage === 'Username is unique'
+                                                        ? 'text-green-400'
+                                                        : 'text-red-400'
+                                                        }`}
+                                                >
+                                                    {usernameMessage}
+                                                </p>
+                                            )}
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    name="email"
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className="animate-in">
+                                            <FormLabel className="text-blue-300">Email</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} name="email" className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl" />
+                                            </FormControl>
+                                            <p className='text-muted text-gray-400 text-sm'>We will send you a verification code</p>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    name="password"
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className="animate-in">
+                                            <FormLabel className="text-blue-300">Password</FormLabel>
+                                            <FormControl>
+                                                <Input type="password" {...field} name="password" className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:bg-blue-500"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                            Please wait
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="mr-2">Sign Up</span>
+                                            <UserPlus className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                                        </>
+                                    )}
+                                </Button>
+                            </form>
+                        </Form>
+                        <div className="text-center mt-6 animate-in">
+                            <p className="text-gray-300">
+                                Already a member?{' '}
+                                <Link href="/sign-in" className="text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center justify-center group">
+                                    <span>Sign in</span>
+                                    <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </Link>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
-

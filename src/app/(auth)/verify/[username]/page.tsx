@@ -1,8 +1,10 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Form,
+    FormControl,
     FormField,
     FormItem,
     FormLabel,
@@ -17,11 +19,18 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { verifySchema } from '@/schemas/verifySchema';
+import { gsap } from 'gsap';
+import { Loader2, CheckCircle } from 'lucide-react';
+import InteractiveBackground from '@/components/ui/InteractiveBackground';
+import React from 'react';
 
 export default function VerifyAccount() {
     const router = useRouter();
     const params = useParams<{ username: string }>();
     const { toast } = useToast();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
+
     const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),
     });
@@ -51,31 +60,93 @@ export default function VerifyAccount() {
         }
     };
 
+    useEffect(() => {
+        const tl = gsap.timeline();
+
+        tl.fromTo(
+            containerRef.current,
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
+        );
+
+        const animateElements = formRef.current?.querySelectorAll('.animate-in');
+        if (animateElements) {
+            tl.fromTo(
+                animateElements,
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out' },
+                '-=0.5'
+            );
+        }
+
+        const hoverAnimation = gsap.to(containerRef.current, {
+            boxShadow: '0 0 30px rgba(66, 153, 225, 0.3)',
+            duration: 0.3,
+            paused: true,
+        });
+
+        const handleMouseEnter = () => hoverAnimation.play();
+        const handleMouseLeave = () => hoverAnimation.reverse();
+
+        containerRef.current?.addEventListener('mouseenter', handleMouseEnter);
+        containerRef.current?.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+            containerRef.current?.removeEventListener('mouseenter', handleMouseEnter);
+            containerRef.current?.removeEventListener('mouseleave', handleMouseLeave);
+        };
+    }, []);
+
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-                <div className="text-center">
-                    <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-                        Verify Your Account
-                    </h1>
-                    <p className="mb-4">Enter the verification code sent to your email</p>
+        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-gray-900">
+            <InteractiveBackground />
+            <div ref={containerRef} className="w-full max-w-md relative z-10">
+                <div className="bg-gray-800 bg-opacity-40 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+                    <div className="p-8 md:p-12">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center text-blue-300 animate-in">
+                            Verify Your Account
+                        </h1>
+                        <p className="text-gray-300 mb-8 text-center animate-in">
+                            Enter the verification code sent to your email
+                        </p>
+                        <Form {...form}>
+                            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    name="code"
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className="animate-in">
+                                            <FormLabel className="text-blue-300">Verification Code</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:bg-blue-500"
+                                >
+                                    {form.formState.isSubmitting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                            Verifying...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="mr-2">Verify</span>
+                                            <CheckCircle className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
+                                        </>
+                                    )}
+                                </Button>
+                            </form>
+                        </Form>
+                    </div>
                 </div>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        <FormField
-                            name="code"
-                            control={form.control}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Verification Code</FormLabel>
-                                    <Input {...field} />
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit">Verify</Button>
-                    </form>
-                </Form>
             </div>
         </div>
     );
