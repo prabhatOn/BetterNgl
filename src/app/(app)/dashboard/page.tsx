@@ -16,7 +16,7 @@ import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { AcceptMessageSchema } from '@/schemas/acceptMessageSchema';
 import { gsap } from 'gsap';
-
+import InteractiveBackground from '@/components/ui/InteractiveBackground';
 function UserDashboard() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -167,6 +167,7 @@ function UserDashboard() {
             ref={containerRef}
             className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8 font-sans"
         >
+           <InteractiveBackground />
             <div className="max-w-5xl mx-auto bg-zinc-900/50 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden">
                 <div className="p-6 sm:p-10">
                     <h1 className="text-4xl font-bold mb-8 text-white font-display">
