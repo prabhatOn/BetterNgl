@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios, { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { X, Share2 } from 'lucide-react';
@@ -30,6 +30,7 @@ type MessageCardProps = {
 export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
     const { toast } = useToast();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const handleDeleteConfirm = async () => {
         try {
@@ -49,19 +50,38 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
     };
 
     const handleShare = () => {
-        if (navigator.share) {
-            navigator.share({
-                title: 'Message',
-                text: message.content,
-                url: window.location.href, // Assuming this is the page URL
-            })
-                .then(() => console.log('Message shared successfully'))
-                .catch(error => console.log('Error sharing', error));
-        } else {
-            toast({
-                title: 'Share not supported',
-                description: 'Your browser does not support the Web Share API.',
-            });
+        if (canvasRef.current) {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                // Draw message content onto the canvas
+                ctx.fillStyle = '#111827'; // Background color
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#fff'; // Text color
+                ctx.font = '16px Arial';
+                ctx.fillText(message.content, 10, 50);
+
+                // Convert canvas to a blob and then create a file
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        const file = new File([blob], 'message.png', { type: 'image/png', lastModified: new Date().getTime() });
+
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            navigator
+                                .share({
+                                    files: [file],
+                                    title: 'Check out this message!',
+                                })
+                                .catch((error) => console.error('Error sharing', error));
+                        } else {
+                            toast({
+                                title: 'Sharing not supported',
+                                description: 'Your browser does not support the Web Share API with files.',
+                            });
+                        }
+                    }
+                });
+            }
         }
     };
 
@@ -140,6 +160,9 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     </Dialog>
                 )}
             </CardContent>
+
+            {/* Hidden canvas for image generation */}
+            <canvas ref={canvasRef} width="400" height="200" className="hidden" />
         </Card>
     );
 }
