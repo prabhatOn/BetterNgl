@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'TBH: Real feedback from real people',
     description: 'Anonymously share your thoughts and feelings with others.',
-    url: 'https://tbh.techxavvy.in', // Replace with your actual URL
+    url: 'https://tbhfeedback.live', // Replace with your actual URL
     siteName: 'TBH',
     type: 'website',
   },

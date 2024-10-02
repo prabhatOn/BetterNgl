@@ -120,7 +120,7 @@ export default function FuturisticMessageUI() {
                 <meta name="description" content="Send anonymous messages to your friends while keeping your identity secret. Make an impact with your words!" />
                 <meta name="keywords" content="anonymous messaging, send messages, secret messages, communication, privacy, interactive UI" />
                 <meta name="author" content="Prabhat Chaubey" />
-                <link rel="canonical" href={`https://tbh.techxavvy.in/u/${username}`} />
+                <link rel="canonical" href={`https://tbhfeedback.live/u/${username}`} />
             </Head>
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
