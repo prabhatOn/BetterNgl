@@ -1,4 +1,4 @@
-// pages/api/check-username-unique.ts or pages/api/username-check.ts
+// src/app/api/check-username-unique/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
@@ -23,7 +23,7 @@ const UsernameQuerySchema = z.object({
 // Set the runtime to Edge
 export const runtime = 'edge';
 
-export default async function handler(req: NextRequest) {
+export default async function POST(req: NextRequest) {
     if (req.method !== 'GET') {
         return NextResponse.json({ success: false, message: 'Method Not Allowed' }, { status: 405 });
     }
