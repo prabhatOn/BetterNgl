@@ -17,9 +17,11 @@ export async function POST(request: Request) {
             );
         }
 
-        // Check if the code is correct and not expired
+        // Check if the code is correct
         const isCodeValid = user.verifyCode === code;
-        const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
+
+        // Check if the code expiry is valid
+        const isCodeNotExpired = user.verifyCodeExpiry ? new Date(user.verifyCodeExpiry) > new Date() : false;
 
         if (isCodeValid && isCodeNotExpired) {
             // Update the user's verification status
