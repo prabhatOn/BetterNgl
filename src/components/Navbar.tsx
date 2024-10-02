@@ -21,10 +21,18 @@ function Navbar() {
                     TBH
                 </a>
                 {session ? (
-                    <>
+                    <div className="flex items-center space-x-4">
                         <span className="mr-4">
                             Welcome, {user.username || user.email}
                         </span>
+                        <Link href="/dashboard">
+                            <Button
+                                className="w-full md:w-auto bg-blue-500 text-white"
+                                variant="outline"
+                            >
+                                Dashboard
+                            </Button>
+                        </Link>
                         <Button
                             onClick={handleLogout}
                             className="w-full md:w-auto bg-slate-100 text-black"
@@ -32,7 +40,7 @@ function Navbar() {
                         >
                             Logout
                         </Button>
-                    </>
+                    </div>
                 ) : (
                     <Link href="/sign-in">
                         <Button
