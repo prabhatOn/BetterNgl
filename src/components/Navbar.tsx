@@ -15,7 +15,7 @@ function Navbar() {
     };
 
     return (
-        <nav className="p-4 md:p-6 shadow-md bg-black  z-10">
+        <nav className="p-4 md:p-6 shadow-md bg-black z-10">
             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
                 <a href="#" className="text-xl text-white font-bold mb-4 md:mb-0">
                     TBH
@@ -27,7 +27,7 @@ function Navbar() {
                         </span>
                         <Link href="/dashboard">
                             <Button
-                                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+                                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300  hover:text-white border-black"
                                 variant="outline"
                             >
                                 Dashboard
@@ -44,7 +44,7 @@ function Navbar() {
                 ) : (
                     <Link href="/sign-in">
                         <Button
-                            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300  "
+                            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all hover:text-white duration-300 border-black "
                             variant={'outline'}
                         >
                             Login

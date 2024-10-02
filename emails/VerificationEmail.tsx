@@ -18,7 +18,7 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
     return (
         <Html lang="en" dir="ltr">
             <Head>
-                <title>Your Verification Code</title>
+                <title>Your tbhfeedback Verification Code</title>
                 <Font
                     fontFamily="Roboto"
                     fallbackFontFamily="Verdana"
