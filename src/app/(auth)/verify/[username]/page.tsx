@@ -98,12 +98,12 @@ export default function VerifyAccount() {
     }, []);
 
     return (
-        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-gray-900">
+        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
             <InteractiveBackground />
             <div ref={containerRef} className="w-full max-w-md relative z-10">
-                <div className="bg-gray-900 bg-opacity-40 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+                <div className="bg-zinc-900/50 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
                     <div className="p-8 md:p-12">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center text-blue-300 animate-in">
+                        <h1 className="text-4xl md:text-4xl font-bold mb-6 leading-tight text-center text-white animate-in">
                             Verify Your Account
                         </h1>
                         <p className="text-gray-300 mb-8 text-center animate-in">
@@ -116,11 +116,11 @@ export default function VerifyAccount() {
                                     control={form.control}
                                     render={({ field }) => (
                                         <FormItem className="animate-in">
-                                            <FormLabel className="text-blue-300">Verification Code</FormLabel>
+                                            <FormLabel className="text-gray-300">Verification Code</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
-                                                    className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl"
+                                                    className="bg-zinc-900/50 bg-opacity-50 border-2 border-gray-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl"
                                                 />
                                             </FormControl>
                                             <FormMessage />

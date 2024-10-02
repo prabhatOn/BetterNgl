@@ -122,15 +122,15 @@ export default function FuturisticMessageUI() {
                 <meta name="author" content="Prabhat Chaubey" />
                 <link rel="canonical" href={`https://tbh.techxavvy.in/u/${username}`} />
             </Head>
-            <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-gray-900">
+            <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
                 <div ref={containerRef} className="w-full max-w-4xl relative z-10">
-                    <div className="bg-gray-900 bg-opacity-50 backdrop-blur-2xl shadow-lg rounded-3xl transition-all duration-300 p-10">
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-center text-blue-300 animate-in">
-                            Send an Anonymous Message to <br />
-                            <span className="text-blue-500">@{username}</span>
+                    <div className="bg-zinc-900/50 backdrop-blur-xl shadow-2xl rounded-3xl transition-all duration-300 p-10">
+                        <h1 className="text-3xl md:text-3xl font-extrabold text-center text-white animate-in">
+                            Send an Anonymous Message to 
+                            <span className="text-purple-600/50"> @{username}</span>
                         </h1>
-                        <p className="text-gray-300 mb-6 text-center animate-in">
+                        <p className="text-zinc-400 mb-6 text-center animate-in">
                             Share your thoughts anonymously and make your words count.
                         </p>
                         <Form {...form}>
@@ -144,7 +144,7 @@ export default function FuturisticMessageUI() {
                                                 <div className="relative group">
                                                     <Textarea
                                                         placeholder="Type your anonymous message here..."
-                                                        className="resize-none text-blue-100 bg-gray-700 bg-opacity-50 border-2 border-gray-500 focus:border-blue-400 focus:ring-blue-400 rounded-2xl w-full h-40 p-4 pr-16 transition-all duration-300"
+                                                        className="resize-none text-blue-100 bg-zinc-800 bg-opacity-50 border-2 border-gray-700 focus:border-purple-400 focus:ring-purple-400 rounded-2xl w-full h-40 p-4 pr-16 transition-all duration-300"
                                                         {...field}
                                                         onChange={(e) => {
                                                             field.onChange(e)
@@ -153,7 +153,7 @@ export default function FuturisticMessageUI() {
                                                     />
                                                     <div className="absolute bottom-4 right-4 w-12 h-1 bg-gray-600 rounded-full overflow-hidden">
                                                         <div
-                                                            className="h-full bg-blue-500 transition-all duration-300"
+                                                            className="h-full bg-gray-500 transition-all duration-300"
                                                             style={{ width: `${(charCount / 500) * 100}%` }}
                                                         ></div>
                                                     </div>
@@ -167,7 +167,7 @@ export default function FuturisticMessageUI() {
                                     <Link href={'/sign-up'}>
                                         <Button
                                             variant="outline"
-                                            className="bg-transparent text-blue-300 border-2 border-blue-500 font-semibold py-2 px-4 rounded-full transition-all duration-300 flex items-center group w-full md:w-auto hover:bg-blue-500 hover:text-white hover:shadow-lg hover:scale-105"
+                                            className="bg-transparent text-purple-300 border-2 border-purple-500 font-semibold py-2 px-4 rounded-full transition-all duration-300 flex items-center group w-full md:w-auto hover:bg-purple-500 hover:text-white hover:shadow-lg hover:scale-105"
                                         >
                                             <User className="mr-2 h-4 w-4" />
                                             Get Your Own
@@ -178,7 +178,7 @@ export default function FuturisticMessageUI() {
                                     <Button
                                         type="submit"
                                         disabled={isLoading || !messageContent}
-                                        className={`bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center group w-full md:w-auto ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-500 hover:shadow-lg hover:scale-105'}`}
+                                        className={`bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center group w-full md:w-auto ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600 hover:shadow-lg hover:scale-105'}`}
                                     >
                                         {isLoading ? (
                                             <>

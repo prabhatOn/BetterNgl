@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Loader } from 'lucide-react'
 
 const FeatureCard = ({ title, description }: { title: string; description: string }) => (
     <div className="relative z-10 rounded-lg bg-zinc-900/50 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-zinc-800/50">
@@ -19,6 +19,18 @@ const ExampleMessage = ({ content }: { content: string }) => (
 )
 
 export default function Home() {
+    const [loading, setLoading] = useState(false)
+
+    const handleButtonClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        setLoading(true)
+        // Simulate a loading delay (e.g., API request)
+        setTimeout(() => {
+            setLoading(false)
+            // Redirect or perform action here
+        }, 2000) // 2-second delay
+    }
+
     return (
         <div className="min-h-screen bg-black text-white font-sans relative">
             <section className="relative z-10 px-4 pt-20 pb-16 md:pt-32 md:pb-24">
@@ -30,14 +42,21 @@ export default function Home() {
                         Share and receive genuine feedback with unparalleled privacy and security.
                     </p>
                     <Button
-                        asChild
                         size="lg"
                         className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+                        onClick={handleButtonClick}
                     >
-                        <Link href="/sign-up" className="flex items-center">
-                            Get started
-                            <ChevronRight className="ml-2 h-4 w-4" />
-                        </Link>
+                        {loading ? (
+                            <div className="flex items-center">
+                                <Loader className="animate-spin h-5 w-5 mr-2" />
+                                Loading...
+                            </div>
+                        ) : (
+                            <Link href="/sign-up" className="flex items-center">
+                                Get started
+                                <ChevronRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        )}
                     </Button>
                 </div>
             </section>
@@ -85,14 +104,21 @@ export default function Home() {
                         Join TBH today and start sharing your thoughts freely and securely.
                     </p>
                     <Button
-                        asChild
                         size="lg"
                         className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+                        onClick={handleButtonClick}
                     >
-                        <Link href="/sign-up" className="flex items-center">
-                            Create Your Account
-                            <ChevronRight className="ml-2 h-4 w-4" />
-                        </Link>
+                        {loading ? (
+                            <div className="flex items-center">
+                                <Loader className="animate-spin h-5 w-5 mr-2" />
+                                Loading...
+                            </div>
+                        ) : (
+                            <Link href="/sign-up" className="flex items-center">
+                                Create Your Account
+                                <ChevronRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        )}
                     </Button>
                 </div>
             </section>
