@@ -1,37 +1,36 @@
 // lib/rateLimiter.ts
 
-import { NextApiRequest, NextApiResponse } from 'next';
-
-type RateLimitRequest = NextApiRequest & {
-    ip?: string; // Optional to accommodate requests without a specific IP
-};
+import { NextRequest, NextResponse } from 'next/server';
 
 const rateLimit = (limit: number, interval: number) => {
     const requests = new Map<string, number[]>();
 
-    return (req: RateLimitRequest, res: NextApiResponse, next: () => void) => {
-        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
+    return async (req: NextRequest, res: NextResponse, next: () => void) => {
+        const ip = req.headers.get('x-forwarded-for') || req.ip || 'unknown';
 
         const now = Date.now();
         const windowStart = now - interval;
 
-        const recentRequests = requests.get(ip as string) || [];
+        const recentRequests = requests.get(ip) || [];
 
         // Filter out old requests
         const updatedRequests = recentRequests.filter(time => time > windowStart);
         updatedRequests.push(now);
 
-        requests.set(ip as string, updatedRequests);
+        requests.set(ip, updatedRequests);
 
         if (updatedRequests.length > limit) {
-            res.status(429).json({
-                success: false,
-                message: 'Rate limit exceeded. Try again later.',
-            });
-            return;
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: 'Rate limit exceeded. Try again later.',
+                },
+                { status: 429 }
+            );
         }
 
-        next();
+        // Call the next middleware function or endpoint handler
+        return next();
     };
 };
 
