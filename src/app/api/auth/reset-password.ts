@@ -12,6 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { email, verifyCode, newPassword } = req.body;
 
+    // Validate input
+    if (!email || !verifyCode || !newPassword) {
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+
     try {
         const user = await UserModel.findOne({ email, verifyCode });
 
@@ -29,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(200).json({ message: 'Password reset successfully' });
     } catch (error) {
+        console.error('Error resetting password:', error);
         res.status(500).json({ message: 'Error resetting password' });
     }
 }

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form'; // Import SubmitHandler for typing onSubmit
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
@@ -13,8 +13,7 @@ interface ResetPasswordFormData {
 }
 
 export default function ResetPassword() {
-    // Define the form data type here
-    const { register, handleSubmit } = useForm<ResetPasswordFormData>(); // Use the type for form
+    const { register, handleSubmit } = useForm<ResetPasswordFormData>();
     const { toast } = useToast();
 
     // Use SubmitHandler for type-safe submission
@@ -30,7 +29,8 @@ export default function ResetPassword() {
         if (response.ok) {
             toast({ title: 'Password reset successful' });
         } else {
-            toast({ title: 'Error', description: 'Error resetting password', variant: 'destructive' });
+            const errorData = await response.json();
+            toast({ title: 'Error', description: errorData.message || 'Error resetting password', variant: 'destructive' });
         }
     };
 
@@ -38,9 +38,9 @@ export default function ResetPassword() {
         <div>
             <h1>Reset Password</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Input {...register('email')} placeholder="Enter your email" />
-                <Input {...register('verifyCode')} placeholder="Enter verification code" />
-                <Input {...register('newPassword')} type="password" placeholder="Enter new password" />
+                <Input {...register('email', { required: true })} placeholder="Enter your email" />
+                <Input {...register('verifyCode', { required: true })} placeholder="Enter verification code" />
+                <Input {...register('newPassword', { required: true })} type="password" placeholder="Enter new password" />
                 <Button type="submit">Reset Password</Button>
             </form>
         </div>

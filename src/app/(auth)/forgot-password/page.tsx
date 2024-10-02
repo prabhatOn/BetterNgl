@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ interface ForgotPasswordFormData {
 }
 
 export default function ForgotPassword() {
-    const { register, handleSubmit } = useForm<ForgotPasswordFormData>(); // Use the type for form data
+    const { register, handleSubmit } = useForm<ForgotPasswordFormData>();
     const [isCodeSent, setIsCodeSent] = useState(false);
     const { toast } = useToast();
 
@@ -29,7 +29,8 @@ export default function ForgotPassword() {
             setIsCodeSent(true);
             toast({ title: 'Verification code sent to your email' });
         } else {
-            toast({ title: 'Error', description: 'Error sending verification code', variant: 'destructive' });
+            const errorData = await response.json();
+            toast({ title: 'Error', description: errorData.message || 'Error sending verification code', variant: 'destructive' });
         }
     };
 
@@ -38,7 +39,7 @@ export default function ForgotPassword() {
             <h1>Forgot Password</h1>
             {!isCodeSent ? (
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <Input {...register('email')} placeholder="Enter your email" />
+                    <Input {...register('email', { required: true })} placeholder="Enter your email" />
                     <Button type="submit">Send Verification Code</Button>
                 </form>
             ) : (

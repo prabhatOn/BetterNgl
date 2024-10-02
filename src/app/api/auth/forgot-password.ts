@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next'; // Import types for request and response
+import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
 import { sendVerificationEmail } from '@/helpers/sendVerificationEmail';
@@ -11,6 +11,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const { email } = req.body;
+
+    // Validate input
+    if (!email || typeof email !== 'string' || !/.+@.+\..+/.test(email)) {
+        return res.status(400).json({ message: 'Please provide a valid email address.' });
+    }
 
     try {
         const user = await UserModel.findOne({ email });
@@ -28,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(200).json({ message: 'Verification code sent' });
     } catch (error) {
-        console.error(error); // Optional: log the error for debugging
+        console.error('Error sending verification code:', error);
         res.status(500).json({ message: 'Error sending verification code' });
     }
 }
