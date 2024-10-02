@@ -2,7 +2,9 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 
-type RateLimitRequest = NextApiRequest & { ip: string };
+type RateLimitRequest = NextApiRequest & {
+    ip?: string; // Optional to accommodate requests without a specific IP
+};
 
 const rateLimit = (limit: number, interval: number) => {
     const requests = new Map<string, number[]>();

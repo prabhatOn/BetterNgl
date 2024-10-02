@@ -18,7 +18,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     await dbConnect();
 
     // Apply rate limiter
-    limiter(req as any, res, async () => { // Use 'as any' to bypass type check
+    limiter(req, res, async () => {
         try {
             const { searchParams } = new URL(req.url as string, `http://${req.headers.host}`);
             const queryParams = {
