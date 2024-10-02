@@ -60,12 +60,12 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                 ctx.fillStyle = '#fff'; // Text color
                 ctx.font = '16px Arial';
                 ctx.fillText(message.content, 10, 50);
-
+    
                 // Convert canvas to a blob and then create a file
                 canvas.toBlob((blob) => {
                     if (blob) {
                         const file = new File([blob], 'message.png', { type: 'image/png', lastModified: new Date().getTime() });
-
+                        
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
                             navigator
                                 .share({
@@ -84,7 +84,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             }
         }
     };
-
+    
     const isLongMessage = message.content.length > 100;
 
     return (
