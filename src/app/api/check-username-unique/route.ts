@@ -1,4 +1,4 @@
-// pages/api/username-check.ts
+// pages/api/check-username-unique.ts or pages/api/username-check.ts
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
@@ -20,9 +20,8 @@ const UsernameQuerySchema = z.object({
     username: usernameValidation,
 });
 
-export const config = {
-    runtime: 'edge', // Set to use Edge function
-};
+// Set the runtime to Edge
+export const runtime = 'edge';
 
 export default async function handler(req: NextRequest) {
     if (req.method !== 'GET') {
