@@ -129,7 +129,8 @@ export default function VerifyAccount() {
                                 />
                                 <Button
                                     type="submit"
-                                    className="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:bg-blue-500"
+                                    className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:from-blue-500 hover:to-purple-500 ${form.formState.isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    disabled={form.formState.isSubmitting} // Disable button while loading
                                 >
                                     {form.formState.isSubmitting ? (
                                         <>

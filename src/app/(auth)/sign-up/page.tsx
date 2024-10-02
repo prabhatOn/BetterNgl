@@ -89,7 +89,6 @@ export default function SignUpForm() {
 
             const axiosError = error as AxiosError<ApiResponse>;
 
-            // Default error message
             let errorMessage = axiosError.response?.data.message ?? 'There was a problem with your sign-up. Please try again.';
 
             toast({
@@ -140,15 +139,15 @@ export default function SignUpForm() {
     }, []);
 
     return (
-        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-gray-900">
+        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black text-white">
             <InteractiveBackground />
             <div ref={containerRef} className="w-full max-w-md relative z-10">
-                <div className="bg-gray-800 bg-opacity-40 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+                <div className="bg-zinc-900/50 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
                     <div className="p-8 md:p-12">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center text-blue-300 animate-in">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center font-display animate-in">
                             Join TBH
                         </h1>
-                        <p className="text-gray-300 mb-8 text-center animate-in">
+                        <p className="text-zinc-400 mb-8 text-center font-body animate-in">
                             Sign up to start your anonymous adventure
                         </p>
                         <Form {...form}>
@@ -158,7 +157,7 @@ export default function SignUpForm() {
                                     control={form.control}
                                     render={({ field }) => (
                                         <FormItem className="animate-in">
-                                            <FormLabel className="text-blue-300">Username</FormLabel>
+                                            <FormLabel className="text-white">Username</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
@@ -166,10 +165,10 @@ export default function SignUpForm() {
                                                         field.onChange(e);
                                                         setUsername(e.target.value);
                                                     }}
-                                                    className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl"
+                                                    className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
                                                 />
                                             </FormControl>
-                                            {isCheckingUsername && <Loader2 className="animate-spin text-blue-300" />}
+                                            {isCheckingUsername && <Loader2 className="animate-spin text-white" />}
                                             {!isCheckingUsername && usernameMessage && (
                                                 <p
                                                     className={`text-sm ${usernameMessage === 'Username is unique'
@@ -189,11 +188,16 @@ export default function SignUpForm() {
                                     control={form.control}
                                     render={({ field }) => (
                                         <FormItem className="animate-in">
-                                            <FormLabel className="text-blue-300">Email</FormLabel>
+                                            <FormLabel className="text-white">Email</FormLabel>
                                             <FormControl>
-                                                <Input {...field} name="email" className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl" />
+                                                <Input
+                                                    {...field}
+                                                    className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
+                                                />
                                             </FormControl>
-                                            <p className='text-muted text-gray-400 text-sm'>We will send you a verification code</p>
+                                            <p className="text-zinc-400 text-sm">
+                                                We will send you a verification code
+                                            </p>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -203,9 +207,13 @@ export default function SignUpForm() {
                                     control={form.control}
                                     render={({ field }) => (
                                         <FormItem className="animate-in">
-                                            <FormLabel className="text-blue-300">Password</FormLabel>
+                                            <FormLabel className="text-white">Password</FormLabel>
                                             <FormControl>
-                                                <Input type="password" {...field} name="password" className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl" />
+                                                <Input
+                                                    type="password"
+                                                    {...field}
+                                                    className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -213,13 +221,13 @@ export default function SignUpForm() {
                                 />
                                 <Button
                                     type="submit"
-                                    className="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:bg-blue-500"
+                                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:from-blue-600 hover:to-purple-600"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? (
                                         <>
                                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                            Please wait
+                                            Signing... up
                                         </>
                                     ) : (
                                         <>
@@ -231,9 +239,12 @@ export default function SignUpForm() {
                             </form>
                         </Form>
                         <div className="text-center mt-6 animate-in">
-                            <p className="text-gray-300">
+                            <p className="text-zinc-400">
                                 Already a member?{' '}
-                                <Link href="/sign-in" className="text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center justify-center group">
+                                <Link
+                                    href="/sign-in"
+                                    className="text-blue-500 hover:text-blue-400 transition-colors duration-300 flex items-center justify-center group"
+                                >
                                     <span>Sign in</span>
                                     <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                                 </Link>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -21,12 +21,13 @@ import { useToast } from '@/components/ui/use-toast';
 import { signInSchema } from '@/schemas/signInSchema';
 import { gsap } from 'gsap';
 import { Loader2, LogIn, ChevronRight } from 'lucide-react';
-import InteractiveBackground from '@/components/ui/InteractiveBackground'; // Import your separate component
+import InteractiveBackground from '@/components/ui/InteractiveBackground';
 
 export default function SignInForm() {
     const router = useRouter();
     const containerRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
@@ -37,7 +38,9 @@ export default function SignInForm() {
     });
 
     const { toast } = useToast();
+
     const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+        setIsLoading(true); // Start loading
         const result = await signIn('credentials', {
             redirect: false,
             identifier: data.identifier,
@@ -63,6 +66,7 @@ export default function SignInForm() {
         if (result?.url) {
             router.replace('/dashboard');
         }
+        setIsLoading(false); // Stop loading
     };
 
     useEffect(() => {
@@ -85,7 +89,7 @@ export default function SignInForm() {
         }
 
         const hoverAnimation = gsap.to(containerRef.current, {
-            boxShadow: '0 0 30px rgba(66, 153, 225, 0.3)',
+            boxShadow: '0 0 30px rgba(66, 153, 225, 0.3)', // Adjusted shadow to match purple
             duration: 0.3,
             paused: true,
         });
@@ -103,15 +107,15 @@ export default function SignInForm() {
     }, []);
 
     return (
-        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-gray-900">
+        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
             <InteractiveBackground />
             <div ref={containerRef} className="w-full max-w-md relative z-10">
-                <div className="bg-gray-800 bg-opacity-40 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+                <div className="bg-zinc-900/50 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
                     <div className="p-8 md:p-12">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center text-blue-300 animate-in">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center text-white animate-in">
                             Welcome Back to TBH
                         </h1>
-                        <p className="text-gray-300 mb-8 text-center animate-in">
+                        <p className="text-zinc-400 mb-8 text-center animate-in">
                             Sign in to continue your secret conversations
                         </p>
                         <Form {...form}>
@@ -121,11 +125,11 @@ export default function SignInForm() {
                                     control={form.control}
                                     render={({ field }) => (
                                         <FormItem className="animate-in">
-                                            <FormLabel className="text-blue-300">Email/Username</FormLabel>
+                                            <FormLabel className="text-white">Email/Username</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
-                                                    className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl"
+                                                    className="bg-zinc-900/50 border-2 border-gray-500 focus:border-purple-400 focus:ring-purple-400 text-white rounded-xl"
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -137,12 +141,12 @@ export default function SignInForm() {
                                     control={form.control}
                                     render={({ field }) => (
                                         <FormItem className="animate-in">
-                                            <FormLabel className="text-blue-300">Password</FormLabel>
+                                            <FormLabel className="text-white">Password</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="password"
                                                     {...field}
-                                                    className="bg-gray-700 bg-opacity-50 border-2 border-blue-500 focus:border-blue-400 focus:ring-blue-400 text-blue-100 rounded-xl"
+                                                    className="bg-zinc-900/50 border-2 border-gray-500 focus:border-purple-400 focus:ring-purple-400 text-white rounded-xl"
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -150,18 +154,25 @@ export default function SignInForm() {
                                     )}
                                 />
                                 <Button
-                                    className="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:bg-blue-500"
+                                    className={`w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                                     type="submit"
+                                    disabled={isLoading} // Disable button while loading
                                 >
-                                    <span className="mr-2">Sign In</span>
-                                    <LogIn className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                                    {isLoading ? (
+                                        <Loader2 className="h-5 w-5 animate-spin" /> // Loader spinner while loading
+                                    ) : (
+                                        <>
+                                            <span className="mr-2">Sign In</span>
+                                            <LogIn className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                                        </>
+                                    )}
                                 </Button>
                             </form>
                         </Form>
                         <div className="text-center mt-6 animate-in">
-                            <p className="text-gray-300">
+                            <p className="text-zinc-400">
                                 Not a member yet?{' '}
-                                <Link href="/sign-up" className="text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center justify-center group">
+                                <Link href="/sign-up" className="text-purple-400 hover:text-purple-300 transition-colors duration-300 flex items-center justify-center group">
                                     <span>Sign up</span>
                                     <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                                 </Link>
