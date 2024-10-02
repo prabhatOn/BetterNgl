@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form'; // Import SubmitHandler for typing onSubmit
 import { Button } from '@/components/ui/button';
