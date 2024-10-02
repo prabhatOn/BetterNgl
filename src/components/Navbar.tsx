@@ -27,7 +27,7 @@ function Navbar() {
                         </span>
                         <Link href="/dashboard">
                             <Button
-                                className="w-full md:w-auto bg-blue-500 text-white"
+                                className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
                                 variant="outline"
                             >
                                 Dashboard
@@ -44,7 +44,7 @@ function Navbar() {
                 ) : (
                     <Link href="/sign-in">
                         <Button
-                            className="w-full md:w-auto bg-slate-100 text-black"
+                            className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
                             variant={'outline'}
                         >
                             Login
