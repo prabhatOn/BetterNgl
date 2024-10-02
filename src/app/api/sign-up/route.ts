@@ -2,6 +2,7 @@ import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
 import bcrypt from 'bcryptjs';
 import { sendVerificationEmail } from '@/helpers/sendVerificationEmail';
+import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   await dbConnect();
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
     });
 
     if (existingVerifiedUserByUsername) {
-      return Response.json(
+      return NextResponse.json(
         {
           success: false,
           message: 'Username is already taken',
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
 
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
-        return Response.json(
+        return NextResponse.json(
           {
             success: false,
             message: 'User already exists with this email',
@@ -69,7 +70,7 @@ export async function POST(request: Request) {
       verifyCode
     );
     if (!emailResponse.success) {
-      return Response.json(
+      return NextResponse.json(
         {
           success: false,
           message: emailResponse.message,
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return Response.json(
+    return NextResponse.json(
       {
         success: true,
         message: 'User registered successfully. Please verify your account.',
@@ -87,7 +88,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error('Error registering user:', error);
-    return Response.json(
+    return NextResponse.json(
       {
         success: false,
         message: 'Error registering user',

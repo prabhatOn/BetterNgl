@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+// Message interface and schema
 export interface Message extends Document {
     content: string;
     createdAt: Date;
@@ -8,27 +9,26 @@ export interface Message extends Document {
 const MessageSchema: Schema<Message> = new mongoose.Schema({
     content: {
         type: String,
-        required: true,
+        required: [true, 'Message content is required'],
     },
     createdAt: {
         type: Date,
-        required: true,
         default: Date.now,
     },
 });
 
+// User interface and schema
 export interface User extends Document {
     username: string;
     email: string;
     password: string;
-    verifyCode: string;
-    verifyCodeExpiry: Date;
+    verifyCode: string | null;
+    verifyCodeExpiry: Date | null;
     isVerified: boolean;
     isAcceptingMessages: boolean;
     messages: Message[];
 }
 
-// Updated User schema
 const UserSchema: Schema<User> = new mongoose.Schema({
     username: {
         type: String,
@@ -48,11 +48,11 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     },
     verifyCode: {
         type: String,
-        required: [true, 'Verify Code is required'],
+        default: null,  // Allow null after verification or password reset
     },
     verifyCodeExpiry: {
         type: Date,
-        required: [true, 'Verify Code Expiry is required'],
+        default: null,  // Allow null after verification or password reset
     },
     isVerified: {
         type: Boolean,
@@ -65,6 +65,7 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     messages: [MessageSchema],
 });
 
+// Prevent overwriting the model in hot-reloading scenarios (common in Next.js)
 const UserModel =
     (mongoose.models.User as mongoose.Model<User>) ||
     mongoose.model<User>('User', UserSchema);
