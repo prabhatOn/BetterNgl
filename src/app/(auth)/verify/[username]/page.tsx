@@ -101,7 +101,7 @@ export default function VerifyAccount() {
         <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-gray-900">
             <InteractiveBackground />
             <div ref={containerRef} className="w-full max-w-md relative z-10">
-                <div className="bg-gray-800 bg-opacity-40 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+                <div className="bg-gray-900 bg-opacity-40 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
                     <div className="p-8 md:p-12">
                         <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center text-blue-300 animate-in">
                             Verify Your Account
