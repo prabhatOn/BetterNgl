@@ -20,14 +20,8 @@ const UsernameQuerySchema = z.object({
     username: usernameValidation,
 });
 
-// Set the runtime to Edge
-export const runtime = 'edge';
-
-export default async function POST(req: NextRequest) {
-    if (req.method !== 'GET') {
-        return NextResponse.json({ success: false, message: 'Method Not Allowed' }, { status: 405 });
-    }
-
+// API route handler
+export async function GET(req: NextRequest) {
     const clientIP = getClientIP(req) || 'unknown'; // Handle undefined IP
 
     // Check if the IP is blocked due to too many failed attempts

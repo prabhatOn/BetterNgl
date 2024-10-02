@@ -1,4 +1,4 @@
-// utils/getClientIP.ts
+// src/utils/getClientIP.ts
 
 import { NextRequest } from 'next/server';
 
@@ -12,6 +12,8 @@ export function getClientIP(req: NextRequest): string | undefined {
         return forwardedFor.split(',')[0].trim();
     }
 
-    // Fallback: Try to get the client's IP from the `req.ip` field, if available (not always set)
-    return req.ip;
+    // Fallback: Try to get the client's IP from the remote address
+    const ip = req.headers.get('remote-address');
+    
+    return ip || undefined; // If `ip` is not set, return undefined
 }
