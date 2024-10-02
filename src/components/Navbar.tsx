@@ -15,9 +15,9 @@ function Navbar() {
     };
 
     return (
-        <nav className="p-4 md:p-6 shadow-md bg-black text-white z-10">
+        <nav className="p-4 md:p-6 shadow-md bg-black  z-10">
             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-                <a href="#" className="text-xl font-bold mb-4 md:mb-0">
+                <a href="#" className="text-xl text-white font-bold mb-4 md:mb-0">
                     TBH
                 </a>
                 {session ? (
