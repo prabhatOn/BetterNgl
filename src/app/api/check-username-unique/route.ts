@@ -1,4 +1,3 @@
-// src/app/api/check-username-unique/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
@@ -35,6 +34,15 @@ export async function GET(req: NextRequest) {
     if (await rateLimiter.isRateLimited(clientIP)) {
         // Log rate-limited attempt
         console.warn(`Rate-limited request from IP: ${clientIP}`);
+        await ipTracker.recordFailedAttempt(clientIP);  // Record the failed attempt
+
+        // If failed attempts exceed threshold, block for 30 minutes (1800 seconds)
+        if (await ipTracker.isBlocked(clientIP)) {
+            await ipTracker.blockIP(clientIP, 30 * 60 * 1000); // Block for 30 minutes
+            console.warn(`IP blocked for 30 minutes: ${clientIP}`);
+            return NextResponse.json({ success: false, message: 'Too many requests. You are blocked for 30 minutes.' }, { status: 429 });
+        }
+
         return NextResponse.json({ success: false, message: rateLimiter['message'] }, { status: 429 });
     }
 

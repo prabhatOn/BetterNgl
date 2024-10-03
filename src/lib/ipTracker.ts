@@ -1,7 +1,7 @@
 type FailedAttempt = {
     attempts: number;
     lastAttempt: number;
-    blockDuration: number; // Make blockDuration per-IP
+    blockDuration: number; // Block duration per IP
 };
 
 // In-memory store for tracking IP attempts
@@ -16,12 +16,13 @@ class IPTracker {
         this.baseBlockDuration = baseBlockDuration;
     }
 
+    // Record a failed attempt for an IP
     async recordFailedAttempt(ip: string): Promise<void> {
         const currentTime = Date.now();
         const attempt = ipStore[ip] || null;
 
         if (attempt) {
-            // Progressive block: Double the block duration after each block
+            // Progressive block: Double block duration after each block
             if (currentTime - attempt.lastAttempt > attempt.blockDuration) {
                 ipStore[ip] = {
                     attempts: 1,
@@ -46,6 +47,7 @@ class IPTracker {
         }
     }
 
+    // Check if an IP is blocked
     async isBlocked(ip: string): Promise<boolean> {
         const attempt = ipStore[ip];
         if (!attempt) return false;
@@ -61,8 +63,19 @@ class IPTracker {
         return attempt.attempts > this.maxAttempts;
     }
 
+    // Reset attempts for an IP (unblock IP)
     async resetAttempts(ip: string): Promise<void> {
         delete ipStore[ip];
+    }
+
+    // Manually block an IP for a specified duration
+    async blockIP(ip: string, duration: number = 30 * 60 * 1000): Promise<void> { // Default block for 30 minutes
+        const currentTime = Date.now();
+        ipStore[ip] = {
+            attempts: this.maxAttempts + 1, // Set attempts to exceed maxAttempts
+            lastAttempt: currentTime,
+            blockDuration: duration, // Set custom block duration
+        };
     }
 }
 
