@@ -1,35 +1,70 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { ChevronRight, Loader } from 'lucide-react'
+import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ChevronRight, Loader } from "lucide-react";
+
+// Define BeforeInstallPromptEvent if it doesn't exist in the environment
+interface BeforeInstallPromptEvent extends Event {
+    prompt: () => Promise<void>;
+    userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
 
 const FeatureCard = ({ title, description }: { title: string; description: string }) => (
     <div className="relative z-10 rounded-lg bg-zinc-900/50 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-zinc-800/50">
         <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
         <p className="text-zinc-400">{description}</p>
     </div>
-)
+);
 
 const ExampleMessage = ({ content }: { content: string }) => (
     <div className="relative z-10 rounded-lg bg-zinc-800/50 backdrop-blur-sm p-4 text-zinc-300">
         {content}
     </div>
-)
+);
 
 export default function Home() {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+    const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+    // Define the event handler as a stable reference
+    const handleBeforeInstallPrompt = useCallback((e: BeforeInstallPromptEvent) => {
+        e.preventDefault();
+        setDeferredPrompt(e);
+        setShowInstallPrompt(true);
+    }, []);
+
+    useEffect(() => {
+        // Listen for the beforeinstallprompt event
+        window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
+
+        // Cleanup event listener on component unmount
+        return () => {
+            window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
+        };
+    }, [handleBeforeInstallPrompt]);
+
+    const handleInstallClick = async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            setDeferredPrompt(null);
+            setShowInstallPrompt(false);
+        }
+    };
 
     const handleButtonClick = (e: React.MouseEvent) => {
-        e.preventDefault()
-        setLoading(true)
+        e.preventDefault();
+        setLoading(true);
         // Simulate a loading delay (e.g., API request)
         setTimeout(() => {
-            setLoading(false)
+            setLoading(false);
             // Redirect or perform action here
-        }, 2000) // 2-second delay
-    }
+        }, 2000); // 2-second delay
+    };
 
     return (
         <div className="min-h-screen bg-black text-white font-sans relative">
@@ -122,12 +157,20 @@ export default function Home() {
                     </Button>
                 </div>
             </section>
-
+            {/* Install Prompt Section */}
+            {showInstallPrompt && (
+                <div className="fixed bottom-4 right-4 z-20 p-4 bg-zinc-800 rounded-lg shadow-lg">
+                    <p className="text-white mb-2">Want to install the TBH app?</p>
+                    <Button onClick={handleInstallClick} className="bg-blue-600">
+                        Install
+                    </Button>
+                </div>
+            )}
             <footer className="relative z-10 px-4 py-6 text-center text-zinc-500 border-t border-zinc-800">
                 <p className="font-body">
                     © 2024 TBH. Revolutionizing how you share thoughts and feelings anonymously.
                 </p>
             </footer>
         </div>
-    )
+    );
 }
