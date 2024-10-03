@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://tbhfeedback.live
+
+# Sitemaps
+Sitemap: https://tbhfeedback.live/sitemap.xml

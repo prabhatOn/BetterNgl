@@ -1,13 +1,15 @@
 const withPWA = require('next-pwa')({
     dest: 'public',
-    disable: process.env.NODE_ENV === 'development',
+    disable: process.env.NODE_ENV === 'development', // Disable in dev environment
 });
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withPWA({
+const nextConfig = {
     eslint: {
-        ignoreDuringBuilds: true,
+        ignoreDuringBuilds: true, // Correct placement for eslint config
     },
-});
+    // Other Next.js configuration
+};
 
-module.exports = nextConfig;
+// Apply PWA configuration and export
+module.exports = withPWA(nextConfig);
