@@ -1,5 +1,6 @@
-// lib/rateLimiter.ts
-import { NextRequest } from 'next/server';
+import Redis from 'ioredis';
+
+const redis = new Redis();
 
 type RateLimitOptions = {
     windowMs: number;
@@ -8,7 +9,6 @@ type RateLimitOptions = {
 };
 
 class RateLimiter {
-    private requests: Map<string, { count: number; firstRequest: number }> = new Map();
     private windowMs: number;
     private max: number;
     private message: string;
@@ -19,35 +19,39 @@ class RateLimiter {
         this.message = options.message;
     }
 
-    isRateLimited(ip: string): boolean {
+    async isRateLimited(ip: string): Promise<boolean> {
         const currentTime = Date.now();
-        const record = this.requests.get(ip);
-
+        const rateLimitKey = `rate-limit:${ip}`;
+        
+        let record = await redis.get(rateLimitKey);
         if (!record) {
-            this.requests.set(ip, { count: 1, firstRequest: currentTime });
+            // No record found, initialize it
+            await redis.set(rateLimitKey, JSON.stringify({ count: 1, firstRequest: currentTime }), 'PX', this.windowMs);
             return false;
         }
 
-        if (currentTime - record.firstRequest > this.windowMs) {
-            // Reset the count and timestamp
-            this.requests.set(ip, { count: 1, firstRequest: currentTime });
+        let { count, firstRequest } = JSON.parse(record);
+        count += 1;
+
+        if (currentTime - firstRequest > this.windowMs) {
+            // Reset the count and timestamp if window has passed
+            await redis.set(rateLimitKey, JSON.stringify({ count: 1, firstRequest: currentTime }), 'PX', this.windowMs);
             return false;
         }
 
-        record.count += 1;
-
-        if (record.count > this.max) {
+        if (count > this.max) {
             return true;
         }
 
-        this.requests.set(ip, record);
+        // Update the count
+        await redis.set(rateLimitKey, JSON.stringify({ count, firstRequest }), 'PX', this.windowMs);
         return false;
     }
 }
 
 const rateLimiter = new RateLimiter({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    max: 100, // Limit each IP to 100 requests per windowMs
     message: 'Too many requests, please try again later.',
 });
 

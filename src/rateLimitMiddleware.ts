@@ -1,16 +1,24 @@
-// middleware/rateLimitMiddleware.ts
 import { NextRequest, NextResponse } from 'next/server';
 import rateLimiter from '@/lib/rateLimiter';
 import { getClientIP } from '@/utils/getClientIP';
 
-export async function rateLimitMiddleware(req: NextRequest) {
-    const clientIP = getClientIP(req); // Now works with NextRequest
+// Example of a whitelist for trusted IPs
+const IP_WHITELIST = ['127.0.0.1', 'your-admin-ip'];
 
-    if (rateLimiter.isRateLimited(clientIP || 'unknown')) {
+export async function rateLimitMiddleware(req: NextRequest) {
+    const clientIP = getClientIP(req) || 'unknown';
+
+    // Bypass rate limiting for whitelisted IPs
+    if (IP_WHITELIST.includes(clientIP)) {
+        return NextResponse.next();
+    }
+
+    // Apply rate limiting for non-whitelisted IPs
+    if (await rateLimiter.isRateLimited(clientIP)) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Too many requests, please try again later.',
+                message: rateLimiter['message'],
             }),
             { status: 429 }
         );

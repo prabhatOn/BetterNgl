@@ -1,55 +1,75 @@
-// lib/ipTracker.ts
+import Redis from 'ioredis';
+
+// Initialize Redis (ensure Redis is installed and running)
+const redis = new Redis();
+
 type FailedAttempt = {
     attempts: number;
     lastAttempt: number;
+    blockDuration: number; // Make blockDuration per-IP
 };
 
 class IPTracker {
-    private failedAttempts: Map<string, FailedAttempt> = new Map();
     private maxAttempts: number;
-    private blockDuration: number; // in milliseconds
+    private baseBlockDuration: number; // Base block duration in milliseconds
 
-    constructor(maxAttempts: number, blockDuration: number) {
+    constructor(maxAttempts: number, baseBlockDuration: number) {
         this.maxAttempts = maxAttempts;
-        this.blockDuration = blockDuration;
+        this.baseBlockDuration = baseBlockDuration;
     }
 
-    recordFailedAttempt(ip: string): void {
+    async recordFailedAttempt(ip: string): Promise<void> {
         const currentTime = Date.now();
-        const attempt = this.failedAttempts.get(ip);
+        const attemptData = await redis.get(ip);
+        let attempt: FailedAttempt | null = attemptData ? JSON.parse(attemptData) : null;
 
         if (attempt) {
-            if (currentTime - attempt.lastAttempt > this.blockDuration) {
-                // Reset if block duration has passed
-                this.failedAttempts.set(ip, { attempts: 1, lastAttempt: currentTime });
+            // Progressive block: Double the block duration after each block
+            if (currentTime - attempt.lastAttempt > attempt.blockDuration) {
+                await redis.set(ip, JSON.stringify({
+                    attempts: 1,
+                    lastAttempt: currentTime,
+                    blockDuration: this.baseBlockDuration,
+                }));
             } else {
-                this.failedAttempts.set(ip, { attempts: attempt.attempts + 1, lastAttempt: currentTime });
+                const newAttempts = attempt.attempts + 1;
+                const newBlockDuration = this.baseBlockDuration * Math.pow(2, attempt.attempts - this.maxAttempts);
+                await redis.set(ip, JSON.stringify({
+                    attempts: newAttempts,
+                    lastAttempt: currentTime,
+                    blockDuration: newBlockDuration,
+                }));
             }
         } else {
-            this.failedAttempts.set(ip, { attempts: 1, lastAttempt: currentTime });
+            await redis.set(ip, JSON.stringify({
+                attempts: 1,
+                lastAttempt: currentTime,
+                blockDuration: this.baseBlockDuration,
+            }));
         }
     }
 
-    isBlocked(ip: string): boolean {
-        const attempt = this.failedAttempts.get(ip);
-        if (!attempt) return false;
+    async isBlocked(ip: string): Promise<boolean> {
+        const attemptData = await redis.get(ip);
+        if (!attemptData) return false;
 
+        const attempt: FailedAttempt = JSON.parse(attemptData);
         const currentTime = Date.now();
 
-        if (currentTime - attempt.lastAttempt > this.blockDuration) {
-            // Remove the record if block duration has passed
-            this.failedAttempts.delete(ip);
+        if (currentTime - attempt.lastAttempt > attempt.blockDuration) {
+            // Reset block if duration has passed
+            await redis.del(ip);
             return false;
         }
 
         return attempt.attempts > this.maxAttempts;
     }
 
-    resetAttempts(ip: string): void {
-        this.failedAttempts.delete(ip);
+    async resetAttempts(ip: string): Promise<void> {
+        await redis.del(ip);
     }
 }
 
-const ipTracker = new IPTracker(5, 60 * 1000); // 5 attempts, 1 minute block
+const ipTracker = new IPTracker(5, 60 * 1000); // 5 attempts, base block 1 minute
 
 export default ipTracker;
