@@ -1,12 +1,11 @@
-import Redis from 'ioredis';
-
-const redis = new Redis();
-
 type RateLimitOptions = {
     windowMs: number;
     max: number;
     message: string;
 };
+
+// In-memory store for rate limiting
+const rateLimitStore: Record<string, { count: number; firstRequest: number }> = {};
 
 class RateLimiter {
     private windowMs: number;
@@ -23,19 +22,21 @@ class RateLimiter {
         const currentTime = Date.now();
         const rateLimitKey = `rate-limit:${ip}`;
         
-        let record = await redis.get(rateLimitKey);
+        // Check if there is an existing record for the IP
+        let record = rateLimitStore[rateLimitKey];
+        
         if (!record) {
             // No record found, initialize it
-            await redis.set(rateLimitKey, JSON.stringify({ count: 1, firstRequest: currentTime }), 'PX', this.windowMs);
+            rateLimitStore[rateLimitKey] = { count: 1, firstRequest: currentTime };
             return false;
         }
 
-        let { count, firstRequest } = JSON.parse(record);
+        let { count, firstRequest } = record;
         count += 1;
 
         if (currentTime - firstRequest > this.windowMs) {
-            // Reset the count and timestamp if window has passed
-            await redis.set(rateLimitKey, JSON.stringify({ count: 1, firstRequest: currentTime }), 'PX', this.windowMs);
+            // Reset the count and timestamp if the window has passed
+            rateLimitStore[rateLimitKey] = { count: 1, firstRequest: currentTime };
             return false;
         }
 
@@ -44,7 +45,7 @@ class RateLimiter {
         }
 
         // Update the count
-        await redis.set(rateLimitKey, JSON.stringify({ count, firstRequest }), 'PX', this.windowMs);
+        rateLimitStore[rateLimitKey].count = count;
         return false;
     }
 }
