@@ -3,8 +3,6 @@ type RateLimitOptions = {
     max: number;
     message: string;
 };
-
-// In-memory store for rate limiting
 const rateLimitStore: Record<string, { count: number; firstRequest: number }> = {};
 
 class RateLimiter {

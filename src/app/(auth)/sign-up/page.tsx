@@ -1,22 +1,14 @@
 'use client';
 
+import React, { useEffect, useState, useRef } from 'react';
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDebounce } from 'usehooks-ts';
 import * as z from 'zod';
-
 import { Button } from '@/components/ui/button';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
@@ -25,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { signUpSchema } from '@/schemas/signUpSchema';
 import { gsap } from 'gsap';
 import InteractiveBackground from '@/components/ui/InteractiveBackground';
-import React from 'react';
+import Head from 'next/head';
 
 export default function SignUpForm() {
     const [username, setUsername] = useState('');
@@ -47,6 +39,11 @@ export default function SignUpForm() {
             password: '',
         },
     });
+
+    // SEO and meta tags
+    useEffect(() => {
+        document.title = 'Sign Up | TBH';
+    }, []);
 
     useEffect(() => {
         const checkUsernameUnique = async () => {
@@ -139,120 +136,117 @@ export default function SignUpForm() {
     }, []);
 
     return (
-        <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black text-white">
-            <InteractiveBackground />
-            <div ref={containerRef} className="w-full max-w-md relative z-10">
-                <div className="bg-zinc-900/50 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
-                    <div className="p-8 md:p-12">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center font-display animate-in">
-                            Join TBH
-                        </h1>
-                        <p className="text-zinc-400 mb-8 text-center font-body animate-in">
-                            Sign up to start your anonymous adventure
-                        </p>
-                        <Form {...form}>
-                            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                <FormField
-                                    name="username"
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <FormItem className="animate-in">
-                                            <FormLabel className="text-white">Username</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    onChange={(e) => {
-                                                        field.onChange(e);
-                                                        setUsername(e.target.value);
-                                                    }}
-                                                    className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
-                                                />
-                                            </FormControl>
-                                            {isCheckingUsername && <Loader2 className="animate-spin text-white" />}
-                                            {!isCheckingUsername && usernameMessage && (
-                                                <p
-                                                    className={`text-sm ${usernameMessage === 'Username is unique'
-                                                        ? 'text-green-400'
-                                                        : 'text-red-400'
-                                                        }`}
-                                                >
-                                                    {usernameMessage}
-                                                </p>
-                                            )}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="email"
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <FormItem className="animate-in">
-                                            <FormLabel className="text-white">Email</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
-                                                />
-                                            </FormControl>
-                                            <p className="text-zinc-400 text-sm">
-                                                We will send you a verification code
-                                            </p>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="password"
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <FormItem className="animate-in">
-                                            <FormLabel className="text-white">Password</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="password"
-                                                    {...field}
-                                                    className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button
-                                    type="submit"
-                                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group hover:from-blue-600 hover:to-purple-600"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                            Signing... up
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="mr-2">Sign Up</span>
-                                            <UserPlus className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                                        </>
-                                    )}
-                                </Button>
-                            </form>
-                        </Form>
-                        <div className="text-center mt-6 animate-in">
-                            <p className="text-zinc-400">
-                                Already a member?{' '}
-                                <Link
-                                    href="/sign-in"
-                                    className="text-blue-500 hover:text-blue-400 transition-colors duration-300 flex items-center justify-center group"
-                                >
-                                    <span>Sign in</span>
-                                    <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                                </Link>
+        <>
+            <Head>
+                <meta name="description" content="Sign up to TBH for anonymous messaging, secret conversations, and a futuristic interactive experience. Start your anonymous adventure now." />
+                <meta name="keywords" content="Sign Up, Anonymous Messaging, Secret Conversations, TBH App, Interactive UI" />
+                <meta property="og:title" content="Sign Up | TBH" />
+                <meta property="og:description" content="Join TBH and start your anonymous adventure. Sign up now for secret conversations with an interactive experience." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://your-tbh-url.com/sign-up" />
+                <meta property="og:image" content="/public/tbh-signup-preview.jpg" />
+            </Head>
+
+            <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black text-white">
+                <InteractiveBackground />
+                <div ref={containerRef} className="w-full max-w-md relative z-10">
+                    <div className="bg-zinc-900/50 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+                        <div className="p-8 md:p-12">
+                            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-center font-display animate-in">
+                                Join TBH
+                            </h1>
+                            <p className="text-zinc-400 mb-8 text-center font-body animate-in">
+                                Sign up to start your anonymous adventure
                             </p>
+                            <Form {...form}>
+                                <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                    <FormField
+                                        name="username"
+                                        control={form.control}
+                                        render={({ field }) => (
+                                            <FormItem className="animate-in">
+                                                <FormLabel className="text-white">Username</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        onChange={(e) => {
+                                                            field.onChange(e);
+                                                            setUsername(e.target.value);
+                                                        }}
+                                                        className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
+                                                    />
+                                                </FormControl>
+                                                {isCheckingUsername && <Loader2 className="animate-spin text-white" />}
+                                                {!isCheckingUsername && usernameMessage && (
+                                                    <p
+                                                        className={`text-sm ${usernameMessage === 'Username is unique'
+                                                            ? 'text-green-400'
+                                                            : 'text-red-400'
+                                                            }`}
+                                                    >
+                                                        {usernameMessage}
+                                                    </p>
+                                                )}
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        name="email"
+                                        control={form.control}
+                                        render={({ field }) => (
+                                            <FormItem className="animate-in">
+                                                <FormLabel className="text-white">Email</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
+                                                    />
+                                                </FormControl>
+                                                <p className="text-zinc-400 text-sm">
+                                                    We will send you a verification code
+                                                </p>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        name="password"
+                                        control={form.control}
+                                        render={({ field }) => (
+                                            <FormItem className="animate-in">
+                                                <FormLabel className="text-white">Password</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="password"
+                                                        {...field}
+                                                        className="bg-zinc-800/50 border-2 border-gray-500 text-white focus:ring-blue-500 rounded-xl"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button
+                                        type="submit"
+                                        className="w-full flex justify-center items-center space-x-2 animate-in bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? <Loader2 className="animate-spin" /> : <UserPlus />}
+                                        <span>{isSubmitting ? 'Submitting' : 'Sign Up'}</span>
+                                    </Button>
+                                </form>
+                            </Form>
+                            <div className="text-center mt-6 text-zinc-400 animate-in">
+                                Already have an account?{' '}
+                                <Link href="/login" className="underline">
+                                    Sign In
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

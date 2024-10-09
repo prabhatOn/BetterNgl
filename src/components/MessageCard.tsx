@@ -31,6 +31,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
     const { toast } = useToast();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [isFullMessageShown, setIsFullMessageShown] = useState(false);
 
     const handleDeleteConfirm = async () => {
         try {
@@ -50,41 +51,45 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
     };
 
     const handleShare = () => {
-        if (canvasRef.current) {
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                // Draw message content onto the canvas
-                ctx.fillStyle = '#111827'; // Background color
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#fff'; // Text color
-                ctx.font = '16px Arial';
-                ctx.fillText(message.content, 10, 50);
-    
-                // Convert canvas to a blob and then create a file
-                canvas.toBlob((blob) => {
-                    if (blob) {
-                        const file = new File([blob], 'message.png', { type: 'image/png', lastModified: new Date().getTime() });
-                        
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                            navigator
-                                .share({
-                                    files: [file],
-                                    title: 'Check out this message!',
-                                })
-                                .catch((error) => console.error('Error sharing', error));
-                        } else {
-                            toast({
-                                title: 'Sharing not supported',
-                                description: 'Your browser does not support the Web Share API with files.',
-                            });
-                        }
-                    }
-                });
-            }
+        const shareUrl = `${window.location.origin}/message/${message._id}`; // URL to share
+        const shareText = message.content.length > 100 ? `${message.content.slice(0, 100)}...` : message.content;
+
+        if (navigator.share) {
+            navigator
+                .share({
+                    title: 'Check out this message!',
+                    text: shareText,
+                    url: shareUrl,
+                })
+                .catch((error) => console.error('Error sharing', error));
+        } else {
+            // Fallback to copy link if native sharing is not supported
+            navigator.clipboard.writeText(shareUrl);
+            toast({
+                title: 'Link copied',
+                description: 'The link has been copied to your clipboard.',
+            });
         }
     };
-    
+
+    const handleSocialMediaShare = (platform: string) => {
+        const shareUrl = `${window.location.origin}/message/${message._id}`;
+        const shareText = message.content.length > 100 ? `${message.content.slice(0, 100)}...` : message.content;
+
+        let socialUrl = '';
+        switch (platform) {
+            case 'twitter':
+                socialUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                break;
+            case 'facebook':
+                socialUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                break;
+            default:
+                return;
+        }
+        window.open(socialUrl, '_blank');
+    };
+
     const isLongMessage = message.content.length > 100;
 
     return (
@@ -92,7 +97,9 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             <CardHeader>
                 <div className="flex justify-between items-start">
                     <CardTitle className="text-lg text-white font-semibold font-display">
-                        {isLongMessage ? `${message.content.slice(0, 100)}...` : message.content}
+                        {isFullMessageShown || !isLongMessage
+                            ? message.content
+                            : `${message.content.slice(0, 100)}...`}
                     </CardTitle>
                     <div className="flex space-x-2">
                         {/* Share Button */}
@@ -102,6 +109,20 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                             onClick={handleShare}
                         >
                             <Share2 className="w-5 h-5" />
+                        </Button>
+
+                        {/* Social Media Share */}
+                        <Button
+                            onClick={() => handleSocialMediaShare('twitter')}
+                            className="p-2 text-white hover:text-blue-400"
+                        >
+                            Share on Twitter
+                        </Button>
+                        <Button
+                            onClick={() => handleSocialMediaShare('facebook')}
+                            className="p-2 text-white hover:text-blue-600"
+                        >
+                            Share on Facebook
                         </Button>
 
                         {/* Delete Button */}
@@ -144,7 +165,16 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             </CardHeader>
 
             <CardContent className="text-white font-body text-sm pt-4 pb-2 max-h-24 overflow-hidden">
-                {isLongMessage && (
+                {isLongMessage && !isFullMessageShown && (
+                    <div
+                        className="cursor-pointer text-gray-300 hover:text-white"
+                        onClick={() => setIsFullMessageShown(true)}
+                    >
+                        Show more
+                    </div>
+                )}
+
+                {isLongMessage && isFullMessageShown && (
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
                             <div className="cursor-pointer text-gray-300 hover:text-white">

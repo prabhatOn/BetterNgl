@@ -116,11 +116,20 @@ export default function FuturisticMessageUI() {
     return (
         <>
             <Head>
-                <title>Send an Anonymous Message to @{username}</title>
-                <meta name="description" content="Send anonymous messages to your friends while keeping your identity secret. Make an impact with your words!" />
-                <meta name="keywords" content="anonymous messaging, send messages, secret messages, communication, privacy, interactive UI" />
+                <title>Send Anonymous Messages | Futuristic UI | @{username}</title>
+                <meta name="description" content="Send anonymous messages to @username with a futuristic and interactive UI. Share your thoughts privately and make your words count!" />
+                <meta name="keywords" content="anonymous messaging, futuristic UI, send anonymous messages, @${username}, secret messages, privacy, interactive design" />
                 <meta name="author" content="Prabhat Chaubey" />
                 <link rel="canonical" href={`https://tbhfeedback.live/u/${username}`} />
+                <meta property="og:title" content={`Send Anonymous Messages to @${username}`} />
+                <meta property="og:description" content="Share your thoughts anonymously with a futuristic UI." />
+                <meta property="og:image" content="/path-to-futuristic-ui-image.jpg" />
+                <meta property="og:url" content={`https://tbhfeedback.live/u/${username}`} />
+                <meta property="og:type" content="website" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`Send Anonymous Messages to @${username}`} />
+                <meta name="twitter:description" content="Share your thoughts anonymously with a futuristic UI." />
+                <meta name="twitter:image" content="/path-to-futuristic-ui-image.jpg" />
             </Head>
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
@@ -198,10 +207,8 @@ export default function FuturisticMessageUI() {
                     </div>
                 </div>
                 {showSparkles && (
-                    <div className="fixed inset-0 pointer-events-none z-50">
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <Sparkles className="text-yellow-400 animate-ping" size={48} />
-                        </div>
+                    <div className="absolute inset-0 z-20 pointer-events-none">
+                        <Sparkles />
                     </div>
                 )}
             </div>

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Head from "next/head";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Loader } from "lucide-react";
 
-// Define BeforeInstallPromptEvent if it doesn't exist in the environment
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
     userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
@@ -29,7 +29,6 @@ export default function Home() {
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
-    // Define the event handler as a stable reference
     const handleBeforeInstallPrompt = useCallback((e: BeforeInstallPromptEvent) => {
         e.preventDefault();
         setDeferredPrompt(e);
@@ -37,10 +36,8 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        // Listen for the beforeinstallprompt event
         window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
 
-        // Cleanup event listener on component unmount
         return () => {
             window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
         };
@@ -59,113 +56,85 @@ export default function Home() {
     const handleButtonClick = (e: React.MouseEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate a loading delay (e.g., API request)
         setTimeout(() => {
             setLoading(false);
-            // Redirect or perform action here
-        }, 2000); // 2-second delay
+        }, 2000);
     };
 
     return (
         <div className="min-h-screen bg-black text-white font-sans relative">
-            <section className="relative z-10 px-4 pt-20 pb-16 md:pt-32 md:pb-24">
-                <div className="mx-auto max-w-6xl text-center">
-                    <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-display">
-                        Honesty Redefined
-                    </h1>
-                    <p className="mb-10 text-xl text-zinc-400 sm:text-2xl font-body">
-                        Share and receive genuine feedback with unparalleled privacy and security.
-                    </p>
-                    <Button
-                        size="lg"
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
-                        onClick={handleButtonClick}
-                    >
-                        {loading ? (
-                            <div className="flex items-center">
-                                <Loader className="animate-spin h-5 w-5 mr-2" />
-                                Loading...
-                            </div>
-                        ) : (
-                            <Link href="/sign-up" className="flex items-center">
-                                Get started
-                                <ChevronRight className="ml-2 h-4 w-4" />
-                            </Link>
-                        )}
-                    </Button>
+            {/* Meta Tags for SEO */}
+            <Head>
+                <meta name="description" content="TBH is a revolutionary platform that ensures privacy and security when sharing or receiving honest feedback. Join today to start sharing anonymously." />
+                <meta name="keywords" content="anonymous feedback, private feedback, secure feedback platform, TBH app" />
+                <meta property="og:title" content="TBH - Honest Anonymous Feedback" />
+                <meta property="og:description" content="Securely share and receive anonymous feedback with complete privacy and trust." />
+                <meta property="og:image" content="/path/to/image.jpg" />
+                <meta property="og:url" content="https://yourwebsite.com" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="TBH - Honest Anonymous Feedback" />
+                <meta name="twitter:description" content="Revolutionizing anonymous feedback by providing ultimate privacy and security." />
+                <meta name="twitter:image" content="/path/to/image.jpg" />
+                <title>TBH - Honest, Anonymous Feedback with Security</title>
+            </Head>
+
+            {/* Hero Section */}
+            <section className="text-center py-16">
+                <h1 className="text-4xl font-bold text-white mb-4">Get Honest, Anonymous Feedback Securely</h1>
+                <p className="text-zinc-400 max-w-xl mx-auto mb-8">
+                    Securely share and receive genuine feedback with guaranteed privacy. TBH ensures your identity stays protected.
+                </p>
+                <Button onClick={handleButtonClick} className="bg-blue-600 px-6 py-3 text-lg rounded-md hover:bg-blue-700">
+                    {loading ? <Loader className="animate-spin" /> : "Start Sharing Now"}
+                </Button>
+            </section>
+
+            {/* Features Section */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-8">
+                <FeatureCard
+                    title="Secure & Private Feedback"
+                    description="Advanced encryption ensures complete anonymity and data privacy."
+                />
+                <FeatureCard
+                    title="True Honest Feedback"
+                    description="Foster an environment that encourages open, authentic communication."
+                />
+                <FeatureCard
+                    title="Seamless User Experience"
+                    description="Designed for easy interaction, making sharing thoughts effortless."
+                />
+            </section>
+
+            {/* Example Messages */}
+            <section className="px-4 py-8 bg-zinc-900/50">
+                <h2 className="text-2xl font-semibold text-white mb-4">Examples of Honest Feedback</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <ExampleMessage content="Great presentation, though adding specific examples could make your points clearer." />
+                    <ExampleMessage content="Your effort is appreciated! Improving team communication could elevate your performance." />
                 </div>
             </section>
 
-            <section className="relative z-10 px-4 py-16 md:py-24 bg-zinc-950/50 backdrop-blur-sm">
-                <div className="mx-auto max-w-6xl">
-                    <h2 className="mb-12 text-center text-3xl font-bold sm:text-4xl font-display">
-                        Why Choose TBH?
-                    </h2>
-                    <div className="grid gap-8 md:grid-cols-3">
-                        <FeatureCard
-                            title="Enhanced Privacy"
-                            description="State-of-the-art encryption and anonymity features to protect your identity."
-                        />
-                        <FeatureCard
-                            title="Honest Feedback"
-                            description="Create an environment where people feel safe to share their true thoughts."
-                        />
-                        <FeatureCard
-                            title="User-Friendly"
-                            description="Intuitive interface designed for seamless interaction and communication."
-                        />
-                    </div>
-                </div>
+            {/* Call to Action */}
+            <section className="text-center py-16 bg-zinc-800">
+                <h2 className="text-3xl font-bold text-white mb-4">Ready for True Honest Feedback?</h2>
+                <p className="text-zinc-400 max-w-xl mx-auto mb-8">
+                    Sign up today and safely share what really matters—privately and securely.
+                </p>
+                <Button onClick={handleButtonClick} className="bg-green-600 px-6 py-3 text-lg rounded-md hover:bg-green-700">
+                    {loading ? <Loader className="animate-spin" /> : "Join TBH Now"}
+                </Button>
             </section>
 
-            <section className="relative z-10 px-4 py-16 md:py-24">
-                <div className="mx-auto max-w-6xl">
-                    <h2 className="mb-12 text-center text-3xl font-bold sm:text-4xl font-display">
-                        Experience True Honesty
-                    </h2>
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <ExampleMessage content="Your presentation was insightful, but I think it could benefit from more concrete examples." />
-                        <ExampleMessage content="I appreciate your hard work, but I feel there's room for improvement in team communication." />
-                    </div>
-                </div>
-            </section>
-
-            <section className="relative z-10 px-4 py-16 md:py-24 bg-zinc-950/50 backdrop-blur-sm">
-                <div className="mx-auto max-w-3xl text-center">
-                    <h2 className="mb-6 text-3xl font-bold sm:text-4xl font-display">
-                        Ready to Embrace Honesty?
-                    </h2>
-                    <p className="mb-10 text-xl text-zinc-400 font-body">
-                        Join TBH today and start sharing your thoughts freely and securely.
-                    </p>
-                    <Button
-                        size="lg"
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
-                        onClick={handleButtonClick}
-                    >
-                        {loading ? (
-                            <div className="flex items-center">
-                                <Loader className="animate-spin h-5 w-5 mr-2" />
-                                Loading...
-                            </div>
-                        ) : (
-                            <Link href="/sign-up" className="flex items-center">
-                                Create Your Account
-                                <ChevronRight className="ml-2 h-4 w-4" />
-                            </Link>
-                        )}
-                    </Button>
-                </div>
-            </section>
-            {/* Install Prompt Section */}
+            {/* Install Prompt */}
             {showInstallPrompt && (
-                <div className="fixed bottom-4 right-4 z-20 p-4 bg-zinc-800 rounded-lg shadow-lg">
-                    <p className="text-white mb-2">Want to install the TBH app?</p>
-                    <Button onClick={handleInstallClick} className="bg-blue-600">
-                        Install
+                <div className="fixed bottom-4 left-4 z-50 bg-zinc-800 p-4 rounded-lg shadow-lg">
+                    <p className="text-zinc-200 mb-4">Install TBH for a better experience.</p>
+                    <Button onClick={handleInstallClick} className="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700">
+                        Install TBH
                     </Button>
                 </div>
             )}
+
             <footer className="relative z-10 px-4 py-6 text-center text-zinc-500 border-t border-zinc-800">
                 <p className="font-body">
                     © 2024 TBH. Revolutionizing how you share thoughts and feelings anonymously.
