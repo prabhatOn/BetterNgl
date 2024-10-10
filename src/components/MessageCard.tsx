@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { X, Share2 } from 'lucide-react';
@@ -17,7 +17,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { ApiResponse } from '@/types/ApiResponse';
 
@@ -48,78 +48,77 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
         }
     };
 
-    const handleShare = () => {
+    const handleShare = async () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-    
+
         const context = canvas.getContext('2d');
         if (!context) return;
-    
-        const logo = new Image();
-        logo.src = '/favico.png';
-    
-        logo.onload = () => {
-            // Set canvas dimensions and padding
-            const padding = 30;
-            const logoSize = 40;
-            const maxWidth = canvas.width - padding * 2;
-    
-            // Create the gradient background
-            const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, '#1f1f1f');
-            gradient.addColorStop(1, '#6a0dad');
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-    
-            // Draw the logo in the top center
-            const logoX = canvas.width / 2 - logoSize / 2;
-            context.drawImage(logo, logoX, padding, logoSize, logoSize);
-    
-            // Set text styles for message content
-            context.font = '20px "Helvetica Neue", sans-serif';
-            context.fillStyle = '#fff';
-            context.textAlign = 'center';
-    
-            // Wrap and center the message content
-            const textYStart = padding + logoSize + 40;
-            const lines = wrapText(context, message.content, maxWidth);
-            const lineHeight = 26;
-    
-            // Calculate starting point for centering the text vertically
-            const totalTextHeight = lines.length * lineHeight;
-            const textY = canvas.height / 2 - totalTextHeight / 2;
-    
-            // Draw each line of the message
-            lines.forEach((line, index) => {
-                context.fillText(line, canvas.width / 2, textY + index * lineHeight);
+
+        // Set canvas dimensions
+        canvas.width = 1200;
+        canvas.height = 630;
+
+        // Create gradient background
+        const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#1f1f1f');
+        gradient.addColorStop(1, '#6a0dad');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Load and draw logo
+        const logo = await loadImage('/favico.png');
+        const logoSize = 80;
+        const logoX = canvas.width / 2 - logoSize / 2;
+        const logoY = 40;
+        context.drawImage(logo, logoX, logoY, logoSize, logoSize);
+
+        // Set text styles
+        context.font = '36px "Helvetica Neue", sans-serif';
+        context.fillStyle = '#fff';
+        context.textAlign = 'center';
+
+        // Wrap and draw message content
+        const maxWidth = canvas.width - 100;
+        const lines = wrapText(context, message.content, maxWidth);
+        const lineHeight = 48;
+        const textY = canvas.height / 2 - (lines.length * lineHeight) / 2;
+
+        lines.forEach((line, index) => {
+            context.fillText(line, canvas.width / 2, textY + index * lineHeight);
+        });
+
+        // Draw branding
+        context.font = '24px "Helvetica Neue", sans-serif';
+        context.fillText('tbhfeedback.live', canvas.width - 60, canvas.height - 30);
+
+        // Create a shareable image
+        try {
+            const blob = await new Promise<Blob>((resolve) => canvas.toBlob((blob) => resolve(blob!)));
+            const file = new File([blob], 'message.png', { type: 'image/png' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: 'Check out this message!',
+                });
+            } else {
+                // Fallback for browsers that don't support sharing files
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = 'message.png';
+                link.click();
+            }
+        } catch (error) {
+            console.error('Error sharing', error);
+            toast({
+                title: 'Sharing failed',
+                description: 'Unable to share the message. You can try saving the image instead.',
+                variant: 'destructive',
             });
-    
-            // Draw website mark at bottom-right
-            context.font = '14px "Helvetica Neue", sans-serif';
-            context.fillText('tbhfeedback.live', canvas.width - padding - 80, canvas.height - padding);
-    
-            // Create a shareable image
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    const file = new File([blob], 'message.png', { type: 'image/png' });
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator
-                            .share({
-                                files: [file],
-                                title: 'Check out this message!',
-                            })
-                            .catch((error) => console.error('Error sharing', error));
-                    } else {
-                        toast({
-                            title: 'Sharing not supported',
-                            description: 'Sharing is not supported on this device.',
-                        });
-                    }
-                }
-            });
-        };
+        }
     };
-    
 
     const wrapText = (context: CanvasRenderingContext2D, text: string, maxWidth: number) => {
         const words = text.split(' ');
@@ -140,6 +139,15 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
         return lines;
     };
 
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+        });
+    };
+
     const isLongMessage = message.content.length > 100;
 
     return (
@@ -154,7 +162,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     {/* Share Button */}
                     <Button
                         variant="secondary"
-                        className="p-2 text-black hover:text-gray-300"
+                        className="p-2 text-white hover:text-gray-300"
                         onClick={handleShare}
                         aria-label="Share message"
                     >
@@ -215,7 +223,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             )}
 
             {/* Hidden canvas for rendering shareable image */}
-            <canvas ref={canvasRef} style={{ display: 'none' }} width={600} height={400} />
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
         </Card>
     );
 }
