@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://tbhfeedback.live/og-image.jpg',
+        url: 'https://tbhfeedback.live/favicon.png', // Make sure this is the correct path to your image
         width: 1200,
         height: 630,
         alt: 'TBH: Real Feedback from Real People',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description: 'Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers.',
     images: [
       {
-        url: 'https://tbhfeedback.live/og-image.jpg',
+        url: 'https://tbhfeedback.live/favicon.png',
         alt: 'TBH: Real Feedback from Real People',
       },
     ],

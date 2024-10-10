@@ -51,32 +51,62 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
     const handleShare = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-
+    
         const context = canvas.getContext('2d');
-        if (context) {
+        if (!context) return;
+    
+        // Load the logo from the public folder
+        const logo = new Image();
+        logo.src = '/favico.png';
+    
+        logo.onload = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Set a gradient background
+    
+            // Set padding and max width for text
+            const padding = 10;
+            const maxWidth = canvas.width - padding * 2;
+    
+            // Set the gradient background
             const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, '#1f1f1f'); // dark grey
-            gradient.addColorStop(1, '#6a0dad'); // purple gradient
-
+            gradient.addColorStop(0, '#1f1f1f');
+            gradient.addColorStop(1, '#6a0dad');
             context.fillStyle = gradient;
             context.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Set the text style
+    
+            // Draw the logo on the top, centered
+            const logoSize = 50; // Adjust logo size
+            const logoX = canvas.width / 2 - logoSize / 2;
+            context.drawImage(logo, logoX, padding, logoSize, logoSize);
+    
+            // Set text styles
             context.font = '18px "Helvetica Neue", sans-serif';
             context.fillStyle = '#fff';
-
-            const paddingX = 20;
-            const paddingY = 40;
-            const maxWidth = canvas.width - paddingX * 2;
-
+            
+            // Calculate text positioning
+            const textYStart = padding + logoSize + 20; // Space after the logo
             const lines = wrapText(context, message.content, maxWidth);
+            const lineHeight = 24;
+            const totalTextHeight = lines.length * lineHeight;
+    
+            // Adjust canvas height dynamically based on text height
+            const canvasHeight = totalTextHeight + padding * 2 + logoSize + 30;
+            canvas.height = canvasHeight;
+    
+            // Redraw gradient to fit new canvas size
+            const gradientAdjusted = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradientAdjusted.addColorStop(0, '#1f1f1f');
+            gradientAdjusted.addColorStop(1, '#6a0dad');
+            context.fillStyle = gradientAdjusted;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+    
+            // Draw logo again after resizing canvas
+            context.drawImage(logo, logoX, padding, logoSize, logoSize);
+    
+            // Draw text line by line, starting after the logo
             lines.forEach((line, index) => {
-                context.fillText(line, paddingX, paddingY + index * 24);
+                context.fillText(line, padding, textYStart + index * lineHeight);
             });
-
+    
             // Create a shareable image blob
             canvas.toBlob((blob) => {
                 if (blob) {
@@ -96,8 +126,9 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     }
                 }
             });
-        }
+        };
     };
+    
 
     const wrapText = (context: CanvasRenderingContext2D, text: string, maxWidth: number) => {
         const words = text.split(' ');
@@ -132,7 +163,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     {/* Share Button */}
                     <Button
                         variant="secondary"
-                        className="p-2 text-white hover:text-gray-300"
+                        className="p-2 text-black hover:text-gray-300"
                         onClick={handleShare}
                         aria-label="Share message"
                     >
