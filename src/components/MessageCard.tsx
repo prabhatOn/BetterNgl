@@ -20,7 +20,6 @@ import {
 import { Button } from './ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { ApiResponse } from '@/types/ApiResponse';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/Dialog';
 
 type MessageCardProps = {
     message: Message;
@@ -29,7 +28,6 @@ type MessageCardProps = {
 
 export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
     const { toast } = useToast();
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isFullMessageShown, setIsFullMessageShown] = useState(false);
 
@@ -51,120 +49,125 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
     };
 
     const handleShare = () => {
-        const shareUrl = `${window.location.origin}/message/${message._id}`; // URL to share
-        const shareText = message.content.length > 100 ? `${message.content.slice(0, 100)}...` : message.content;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
 
-        if (navigator.share) {
-            navigator
-                .share({
-                    title: 'Check out this message!',
-                    text: shareText,
-                    url: shareUrl,
-                })
-                .catch((error) => console.error('Error sharing', error));
-        } else {
-            // Fallback to copy link if native sharing is not supported
-            navigator.clipboard.writeText(shareUrl);
-            toast({
-                title: 'Link copied',
-                description: 'The link has been copied to your clipboard.',
+        const context = canvas.getContext('2d');
+        if (context) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            context.fillStyle = '#333';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            context.font = '16px sans-serif';
+            context.fillStyle = '#fff';
+            context.fillText('Message:', 10, 20);
+
+            const lines = wrapText(context, message.content, 380);
+            lines.forEach((line, index) => {
+                context.fillText(line, 10, 40 + index * 20);
+            });
+
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const file = new File([blob], 'message.png', { type: 'image/png' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator
+                            .share({
+                                files: [file],
+                                title: 'Check out this message!',
+                            })
+                            .catch((error) => console.error('Error sharing', error));
+                    } else {
+                        navigator.clipboard.writeText('Sharing is not supported on this device.');
+                        toast({
+                            title: 'Sharing not supported',
+                            description: 'Cannot share image directly from this device.',
+                        });
+                    }
+                }
             });
         }
     };
 
-    const handleSocialMediaShare = (platform: string) => {
-        const shareUrl = `${window.location.origin}/message/${message._id}`;
-        const shareText = message.content.length > 100 ? `${message.content.slice(0, 100)}...` : message.content;
+    const wrapText = (context: CanvasRenderingContext2D, text: string, maxWidth: number) => {
+        const words = text.split(' ');
+        const lines: string[] = [];
+        let currentLine = words[0];
 
-        let socialUrl = '';
-        switch (platform) {
-            case 'twitter':
-                socialUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                break;
-            case 'facebook':
-                socialUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-                break;
-            default:
-                return;
+        for (let i = 1; i < words.length; i++) {
+            const word = words[i];
+            const width = context.measureText(currentLine + ' ' + word).width;
+            if (width < maxWidth) {
+                currentLine += ' ' + word;
+            } else {
+                lines.push(currentLine);
+                currentLine = word;
+            }
         }
-        window.open(socialUrl, '_blank');
+        lines.push(currentLine);
+        return lines;
     };
 
     const isLongMessage = message.content.length > 100;
 
     return (
-        <Card className="bg-zinc-800/50 border border-zinc-700 rounded-lg transition-transform transform hover:scale-105 hover:bg-zinc-800/60 shadow-lg">
-            <CardHeader>
-                <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg text-white font-semibold font-display">
-                        {isFullMessageShown || !isLongMessage
-                            ? message.content
-                            : `${message.content.slice(0, 100)}...`}
-                    </CardTitle>
-                    <div className="flex space-x-2">
-                        {/* Share Button */}
-                        <Button
-                            variant="secondary"
-                            className="p-2 text-white hover:text-gray-300"
-                            onClick={handleShare}
-                        >
-                            <Share2 className="w-5 h-5" />
-                        </Button>
+        <Card className="bg-zinc-800/50 border border-zinc-700 rounded-lg transition-transform transform hover:scale-105 hover:bg-zinc-800/60 shadow-lg p-4 w-full sm:max-w-md">
+            <CardHeader className="flex justify-between items-start">
+                <CardTitle className="text-lg text-white font-semibold font-display">
+                    {isFullMessageShown || !isLongMessage
+                        ? message.content
+                        : `${message.content.slice(0, 100)}...`}
+                </CardTitle>
+                <div className="flex space-x-2">
+                    {/* Share Button */}
+                    <Button
+                        variant="secondary"
+                        className="p-2 text-white hover:text-gray-300"
+                        onClick={handleShare}
+                    >
+                        <Share2 className="w-5 h-5" />
+                    </Button>
 
-                        {/* Social Media Share */}
-                        <Button
-                            onClick={() => handleSocialMediaShare('twitter')}
-                            className="p-2 text-white hover:text-blue-400"
-                        >
-                            Share on Twitter
-                        </Button>
-                        <Button
-                            onClick={() => handleSocialMediaShare('facebook')}
-                            className="p-2 text-white hover:text-blue-600"
-                        >
-                            Share on Facebook
-                        </Button>
-
-                        {/* Delete Button */}
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="destructive" className="p-2 text-red-500 hover:text-red-600">
-                                    <X className="w-5 h-5" />
-                                </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent className="bg-zinc-900 text-white border border-zinc-700">
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-xl font-bold text-red-500">
-                                        Are you sure?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription className="text-zinc-300">
-                                        This action cannot be undone. This will permanently delete this message.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel asChild>
-                                        <Button variant="secondary" className="bg-zinc-700 hover:bg-zinc-600">
-                                            Cancel
-                                        </Button>
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction onClick={handleDeleteConfirm} asChild>
-                                        <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
-                                            Delete
-                                        </Button>
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    </div>
-                </div>
-
-                {/* Date */}
-                <div className="text-sm text-zinc-400 mt-2">
-                    {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
+                    {/* Delete Button */}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" className="p-2 text-red-500 hover:text-red-600">
+                                <X className="w-5 h-5" />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-zinc-900 text-white border border-zinc-700">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-xl font-bold text-red-500">
+                                    Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="text-zinc-300">
+                                    This action cannot be undone. This will permanently delete this message.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel asChild>
+                                    <Button variant="secondary" className="bg-zinc-700 hover:bg-zinc-600">
+                                        Cancel
+                                    </Button>
+                                </AlertDialogCancel>
+                                <AlertDialogAction onClick={handleDeleteConfirm} asChild>
+                                    <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
+                                        Delete
+                                    </Button>
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </CardHeader>
 
-            <CardContent className="text-white font-body text-sm pt-4 pb-2 max-h-24 overflow-hidden">
+            {/* Date */}
+            <div className="text-sm text-zinc-400 mt-2">
+                {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
+            </div>
+
+            <CardContent className="text-white font-body text-sm pt-4 pb-2 max-h-40 overflow-hidden">
                 {isLongMessage && !isFullMessageShown && (
                     <div
                         className="cursor-pointer text-gray-300 hover:text-white"
@@ -174,20 +177,10 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     </div>
                 )}
 
-                {isLongMessage && isFullMessageShown && (
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild>
-                            <div className="cursor-pointer text-gray-300 hover:text-white">
-                                View full message
-                            </div>
-                        </DialogTrigger>
-                        <DialogContent className="bg-zinc-900 text-white border border-zinc-700">
-                            <DialogHeader>
-                                <DialogTitle className="text-xl font-bold">Full Message</DialogTitle>
-                            </DialogHeader>
-                            <div className="text-zinc-300">{message.content}</div>
-                        </DialogContent>
-                    </Dialog>
+                {isFullMessageShown && (
+                    <div className="text-white pt-2">
+                        {message.content}
+                    </div>
                 )}
             </CardContent>
 
