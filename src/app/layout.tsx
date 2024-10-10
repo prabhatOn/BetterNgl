@@ -63,6 +63,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <head>
+        <meta name="google-site-verification" content="qhgaXcxNf_Nb1XyEIC0my4_ydB7WfJ78yHE76erBx0s" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#1e293b" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
