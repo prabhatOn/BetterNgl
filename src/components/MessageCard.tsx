@@ -132,7 +132,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     {/* Delete Button */}
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" className="p-2 text-red-500 hover:text-red-600">
+                            <Button variant="destructive" className="p-2 text-white hover:text-red-600">
                                 <X className="w-5 h-5" />
                             </Button>
                         </AlertDialogTrigger>
@@ -167,19 +167,14 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                 {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
             </div>
 
-            <CardContent className="text-white font-body text-sm pt-4 pb-2 max-h-40 overflow-hidden">
+            <CardContent className={`text-white font-body text-sm pt-4 pb-2 ${isFullMessageShown ? '' : 'max-h-40 overflow-hidden'}`}>
+                {message.content}
                 {isLongMessage && !isFullMessageShown && (
                     <div
-                        className="cursor-pointer text-gray-300 hover:text-white"
+                        className="cursor-pointer text-gray-300 hover:text-white mt-2"
                         onClick={() => setIsFullMessageShown(true)}
                     >
                         Show more
-                    </div>
-                )}
-
-                {isFullMessageShown && (
-                    <div className="text-white pt-2">
-                        {message.content}
                     </div>
                 )}
             </CardContent>
