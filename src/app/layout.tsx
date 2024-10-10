@@ -71,10 +71,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta name="rating" content="General" />
         <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+        <link rel="icon" href="/public/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/public/favicon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon.png" />
 
         {/* Structured Data */}
         <script

@@ -79,11 +79,11 @@ export default function Home() {
                 <meta property="og:title" content="TBH: Real Feedback from Real People" />
                 <meta property="og:description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
                 <meta property="og:url" content="https://tbhfeedback.live" />
-                <meta property="og:image" content="https://tbhfeedback.live/og-image.jpg" />
+                <meta property="og:image" content="https://tbhfeedback.live/favicon.png" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:title" content="TBH: Real Feedback from Real People" />
                 <meta property="twitter:description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
-                <meta property="twitter:image" content="https://tbhfeedback.live/og-image.jpg" />
+                <meta property="twitter:image" content="https://tbhfeedback.live/favicon.png" />
             </Head>
 
             <section className="relative z-10 px-4 pt-20 pb-16 md:pt-32 md:pb-24">

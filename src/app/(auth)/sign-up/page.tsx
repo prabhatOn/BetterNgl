@@ -143,8 +143,8 @@ export default function SignUpForm() {
                 <meta property="og:title" content="Sign Up | TBH" />
                 <meta property="og:description" content="Join TBH and start your anonymous adventure. Sign up now for secret conversations with an interactive experience." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://your-tbh-url.com/sign-up" />
-                <meta property="og:image" content="/public/tbh-signup-preview.jpg" />
+                <meta property="og:url" content="https://www.tbhfeedback.live/sign-up" />
+                <meta property="og:image" content="/public/favicon.png" />
             </Head>
 
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black text-white">

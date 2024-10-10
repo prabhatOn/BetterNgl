@@ -62,8 +62,8 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
         logo.onload = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
     
-            // Set padding and max width for text
-            const padding = 10;
+            // Set padding for the entire canvas
+            const padding = 20;
             const maxWidth = canvas.width - padding * 2;
     
             // Set the gradient background
@@ -78,34 +78,39 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             const logoX = canvas.width / 2 - logoSize / 2;
             context.drawImage(logo, logoX, padding, logoSize, logoSize);
     
-            // Set text styles
+            // Set text styles for message content
             context.font = '18px "Helvetica Neue", sans-serif';
             context.fillStyle = '#fff';
             
             // Calculate text positioning
-            const textYStart = padding + logoSize + 20; // Space after the logo
+            const textYStart = padding + logoSize + 30; // Space after the logo
             const lines = wrapText(context, message.content, maxWidth);
             const lineHeight = 24;
             const totalTextHeight = lines.length * lineHeight;
     
             // Adjust canvas height dynamically based on text height
-            const canvasHeight = totalTextHeight + padding * 2 + logoSize + 30;
+            const canvasHeight = totalTextHeight + padding * 3 + logoSize + 40;
             canvas.height = canvasHeight;
     
-            // Redraw gradient to fit new canvas size
+            // Redraw the background gradient to fit new canvas size
             const gradientAdjusted = context.createLinearGradient(0, 0, canvas.width, canvas.height);
             gradientAdjusted.addColorStop(0, '#1f1f1f');
             gradientAdjusted.addColorStop(1, '#6a0dad');
             context.fillStyle = gradientAdjusted;
             context.fillRect(0, 0, canvas.width, canvas.height);
     
-            // Draw logo again after resizing canvas
+            // Draw the logo again after resizing the canvas
             context.drawImage(logo, logoX, padding, logoSize, logoSize);
     
             // Draw text line by line, starting after the logo
             lines.forEach((line, index) => {
                 context.fillText(line, padding, textYStart + index * lineHeight);
             });
+
+            // Add website text at the bottom-right corner
+            context.font = '14px "Helvetica Neue", sans-serif';
+            context.fillStyle = '#fff';
+            context.fillText('tbhfeedback.live', canvas.width - 120, canvas.height - padding);
     
             // Create a shareable image blob
             canvas.toBlob((blob) => {
@@ -128,7 +133,6 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             });
         };
     };
-    
 
     const wrapText = (context: CanvasRenderingContext2D, text: string, maxWidth: number) => {
         const words = text.split(' ');
@@ -219,17 +223,12 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     className="text-indigo-500 hover:underline mt-2 text-sm"
                     onClick={() => setIsFullMessageShown(!isFullMessageShown)}
                 >
-                    {isFullMessageShown ? 'Show less' : 'Show more'}
+                    {isFullMessageShown ? 'Show Less' : 'Read More'}
                 </Button>
             )}
 
-            {/* Hidden canvas */}
-            <canvas
-                ref={canvasRef}
-                width={512}
-                height={512}
-                className="hidden"
-            />
+            {/* Hidden canvas for rendering shareable image */}
+            <canvas ref={canvasRef} style={{ display: 'none' }} width={600} height={400} />
         </Card>
     );
 }

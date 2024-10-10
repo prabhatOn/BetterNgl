@@ -126,7 +126,7 @@ export default function SignInForm() {
                     property="og:description"
                     content="Sign in to TBH to continue your secret conversations anonymously."
                 />
-                <meta property="og:image" content="/path-to-sign-in-image.jpg" />
+                <meta property="og:image" content="/public/favicon.png" />
                 <meta property="og:url" content="https://tbhfeedback.live/sign-in" />
                 <meta property="og:type" content="website" />
                 <meta name="twitter:card" content="summary_large_image" />
@@ -135,7 +135,7 @@ export default function SignInForm() {
                     name="twitter:description"
                     content="Sign in to TBH to continue your anonymous conversations."
                 />
-                <meta name="twitter:image" content="/path-to-sign-in-image.jpg" />
+                <meta name="twitter:image" content="/public/favicon.png" />
             </Head>
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
