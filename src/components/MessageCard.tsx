@@ -172,22 +172,6 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                 {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
             </div>
 
-            <CardContent
-                className={`text-white font-body text-sm pt-4 pb-2 ${
-                    isFullMessageShown ? '' : 'max-h-40 overflow-hidden'
-                }`}
-            >
-                {message.content}
-                {isLongMessage && (
-                    <div
-                        className="cursor-pointer text-gray-300 hover:text-white mt-2"
-                        onClick={() => setIsFullMessageShown(!isFullMessageShown)}
-                    >
-                        {isFullMessageShown ? 'Show less' : 'Show more'}
-                    </div>
-                )}
-            </CardContent>
-
             {/* Hidden canvas for image generation */}
             <canvas ref={canvasRef} width="400" height="200" className="hidden" />
         </Card>
