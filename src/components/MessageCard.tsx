@@ -79,7 +79,6 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                             })
                             .catch((error) => console.error('Error sharing', error));
                     } else {
-                        // Fallback: Display image in modal or notify the user
                         toast({
                             title: 'Sharing not supported',
                             description: 'Sharing is not supported on this device.',
@@ -102,7 +101,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                 currentLine += ' ' + word;
             } else {
                 lines.push(currentLine);
-                currentLine = word.length > maxWidth ? word.slice(0, maxWidth) + '...' : word;
+                currentLine = word;
             }
         }
         lines.push(currentLine);
@@ -123,7 +122,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     {/* Share Button */}
                     <Button
                         variant="secondary"
-                        className="p-2 text-white hover:text-gray-300"
+                        className="p-2 text-black hover:text-gray-300"
                         onClick={handleShare}
                         aria-label="Share message"
                     >
@@ -174,7 +173,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
 
             <CardContent
                 className={`text-white font-body text-sm pt-4 pb-2 ${
-                    isFullMessageShown ? '' : 'max-h-40 overflow-hidden'
+                    isFullMessageShown ? '' : isLongMessage ? 'max-h-40 overflow-hidden' : ''
                 }`}
             >
                 {isLongMessage && (
