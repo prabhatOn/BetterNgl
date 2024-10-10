@@ -55,64 +55,50 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
         const context = canvas.getContext('2d');
         if (!context) return;
     
-        // Load the logo from the public folder
         const logo = new Image();
         logo.src = '/favico.png';
     
         logo.onload = () => {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-    
-            // Set padding for the entire canvas
-            const padding = 20;
+            // Set canvas dimensions and padding
+            const padding = 30;
+            const logoSize = 40;
             const maxWidth = canvas.width - padding * 2;
     
-            // Set the gradient background
+            // Create the gradient background
             const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
             gradient.addColorStop(0, '#1f1f1f');
             gradient.addColorStop(1, '#6a0dad');
             context.fillStyle = gradient;
             context.fillRect(0, 0, canvas.width, canvas.height);
     
-            // Draw the logo on the top, centered
-            const logoSize = 50; // Adjust logo size
+            // Draw the logo in the top center
             const logoX = canvas.width / 2 - logoSize / 2;
             context.drawImage(logo, logoX, padding, logoSize, logoSize);
     
             // Set text styles for message content
-            context.font = '18px "Helvetica Neue", sans-serif';
+            context.font = '20px "Helvetica Neue", sans-serif';
             context.fillStyle = '#fff';
-            
-            // Calculate text positioning
-            const textYStart = padding + logoSize + 30; // Space after the logo
+            context.textAlign = 'center';
+    
+            // Wrap and center the message content
+            const textYStart = padding + logoSize + 40;
             const lines = wrapText(context, message.content, maxWidth);
-            const lineHeight = 24;
+            const lineHeight = 26;
+    
+            // Calculate starting point for centering the text vertically
             const totalTextHeight = lines.length * lineHeight;
+            const textY = canvas.height / 2 - totalTextHeight / 2;
     
-            // Adjust canvas height dynamically based on text height
-            const canvasHeight = totalTextHeight + padding * 3 + logoSize + 40;
-            canvas.height = canvasHeight;
-    
-            // Redraw the background gradient to fit new canvas size
-            const gradientAdjusted = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradientAdjusted.addColorStop(0, '#1f1f1f');
-            gradientAdjusted.addColorStop(1, '#6a0dad');
-            context.fillStyle = gradientAdjusted;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-    
-            // Draw the logo again after resizing the canvas
-            context.drawImage(logo, logoX, padding, logoSize, logoSize);
-    
-            // Draw text line by line, starting after the logo
+            // Draw each line of the message
             lines.forEach((line, index) => {
-                context.fillText(line, padding, textYStart + index * lineHeight);
+                context.fillText(line, canvas.width / 2, textY + index * lineHeight);
             });
-
-            // Add website text at the bottom-right corner
-            context.font = '14px "Helvetica Neue", sans-serif';
-            context.fillStyle = '#fff';
-            context.fillText('tbhfeedback.live', canvas.width - 120, canvas.height - padding);
     
-            // Create a shareable image blob
+            // Draw website mark at bottom-right
+            context.font = '14px "Helvetica Neue", sans-serif';
+            context.fillText('tbhfeedback.live', canvas.width - padding - 80, canvas.height - padding);
+    
+            // Create a shareable image
             canvas.toBlob((blob) => {
                 if (blob) {
                     const file = new File([blob], 'message.png', { type: 'image/png' });
@@ -133,6 +119,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             });
         };
     };
+    
 
     const wrapText = (context: CanvasRenderingContext2D, text: string, maxWidth: number) => {
         const words = text.split(' ');
