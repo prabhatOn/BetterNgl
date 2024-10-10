@@ -47,6 +47,19 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://tbhfeedback.live",
+    "name": "TBH Feedback",
+    "description": "Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://tbhfeedback.live/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <html lang="en">
       <head>
@@ -57,26 +70,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta name="rating" content="General" />
         <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
         {/* Structured Data */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "url": "https://tbhfeedback.live",
-            "name": "TBH Feedback",
-            "description": "Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers.",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": "https://tbhfeedback.live/search?q={search_term_string}",
-              "query-input": "required name=search_term_string"
-            }
-          })}
-        </script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        />
       </head>
       <AuthProvider>
         <body className={inter.className}>
