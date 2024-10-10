@@ -56,18 +56,28 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
         if (context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
 
-            context.fillStyle = '#333';
+            // Set a gradient background
+            const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#1f1f1f'); // dark grey
+            gradient.addColorStop(1, '#6a0dad'); // purple gradient
+
+            context.fillStyle = gradient;
             context.fillRect(0, 0, canvas.width, canvas.height);
 
-            context.font = '16px sans-serif';
+            // Set the text style
+            context.font = '18px "Helvetica Neue", sans-serif';
             context.fillStyle = '#fff';
-            context.fillText('Message:', 10, 20);
 
-            const lines = wrapText(context, message.content, 380);
+            const paddingX = 20;
+            const paddingY = 40;
+            const maxWidth = canvas.width - paddingX * 2;
+
+            const lines = wrapText(context, message.content, maxWidth);
             lines.forEach((line, index) => {
-                context.fillText(line, 10, 40 + index * 20);
+                context.fillText(line, paddingX, paddingY + index * 24);
             });
 
+            // Create a shareable image blob
             canvas.toBlob((blob) => {
                 if (blob) {
                     const file = new File([blob], 'message.png', { type: 'image/png' });
@@ -122,7 +132,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     {/* Share Button */}
                     <Button
                         variant="secondary"
-                        className="p-2 text-black hover:text-gray-300"
+                        className="p-2 text-white hover:text-gray-300"
                         onClick={handleShare}
                         aria-label="Share message"
                     >
@@ -167,27 +177,28 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             </CardHeader>
 
             {/* Date */}
-            <div className="text-sm text-zinc-400 mt-2">
-                {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
-            </div>
-
-            <CardContent
-                className={`text-white font-body text-sm pt-4 pb-2 ${
-                    isFullMessageShown ? '' : isLongMessage ? 'max-h-40 overflow-hidden' : ''
-                }`}
-            >
-                {isLongMessage && (
-                    <div
-                        className="cursor-pointer text-gray-300 hover:text-white mt-2"
-                        onClick={() => setIsFullMessageShown(!isFullMessageShown)}
-                    >
-                        {isFullMessageShown ? 'Show less' : 'Show more'}
-                    </div>
-                )}
+            <CardContent className="mt-1 text-sm text-gray-400">
+                {dayjs(message.createdAt).format('MMMM D, YYYY h:mm A')}
             </CardContent>
 
-            {/* Hidden canvas for image generation */}
-            <canvas ref={canvasRef} width="400" height="200" className="hidden" />
+            {/* Show full message */}
+            {isLongMessage && (
+                <Button
+                    variant="link"
+                    className="text-indigo-500 hover:underline mt-2 text-sm"
+                    onClick={() => setIsFullMessageShown(!isFullMessageShown)}
+                >
+                    {isFullMessageShown ? 'Show less' : 'Show more'}
+                </Button>
+            )}
+
+            {/* Hidden canvas */}
+            <canvas
+                ref={canvasRef}
+                width={512}
+                height={512}
+                className="hidden"
+            />
         </Card>
     );
 }
