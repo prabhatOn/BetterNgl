@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import axios, { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { X, Share2 } from 'lucide-react';
@@ -55,44 +55,47 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        // Set canvas dimensions
-        canvas.width = 1200;
-        canvas.height = 630;
+        // Set dynamic canvas size based on content length
+        const canvasWidth = 1200;
+        const baseHeight = 300; // Base height for smaller messages
+        const lineHeight = 48;
+        const padding = 10; // Margin from all sides
+        const messageText = message.content;
 
-        // Create gradient background
-        const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, '#1f1f1f');
-        gradient.addColorStop(1, '#6a0dad');
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Load and draw logo
-        const logo = await loadImage('/favico.png');
-        const logoSize = 80;
-        const logoX = canvas.width / 2 - logoSize / 2;
-        const logoY = 40;
-        context.drawImage(logo, logoX, logoY, logoSize, logoSize);
-
-        // Set text styles
+        // Temporary font for height calculation
         context.font = '36px "Helvetica Neue", sans-serif';
-        context.fillStyle = '#fff';
+        const lines = wrapText(context, messageText, canvasWidth - 2 * padding);
+        const canvasHeight = baseHeight + lines.length * lineHeight;
+
+        // Update canvas dimensions based on content
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
+        // Background: Create a clean, modern gradient
+        const gradient = context.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+        gradient.addColorStop(0, '#20232a'); // Match website's darker theme
+        gradient.addColorStop(1, '#3f51b5'); // Accent color for branding
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // Text styles for the message content
+        context.font = '36px "Helvetica Neue", sans-serif';
+        context.fillStyle = '#ffffff'; // White text for contrast
         context.textAlign = 'center';
 
-        // Wrap and draw message content
-        const maxWidth = canvas.width - 100;
-        const lines = wrapText(context, message.content, maxWidth);
-        const lineHeight = 48;
-        const textY = canvas.height / 2 - (lines.length * lineHeight) / 2;
-
+        // Draw the message content (centered)
+        const textY = padding + lineHeight; // Start after padding
         lines.forEach((line, index) => {
-            context.fillText(line, canvas.width / 2, textY + index * lineHeight);
+            context.fillText(line, canvasWidth / 2, textY + index * lineHeight);
         });
 
-        // Draw branding
+        // Footer branding (align bottom-right)
         context.font = '24px "Helvetica Neue", sans-serif';
-        context.fillText('tbhfeedback.live', canvas.width - 60, canvas.height - 30);
+        context.fillStyle = '#c5cae9'; // Light blue branding color
+        context.textAlign = 'right';
+        context.fillText('tbhfeedback.live', canvasWidth - padding, canvasHeight - padding);
 
-        // Create a shareable image
+        // Create a shareable image or fallback to download
         try {
             const blob = await new Promise<Blob>((resolve) => canvas.toBlob((blob) => resolve(blob!)));
             const file = new File([blob], 'message.png', { type: 'image/png' });
@@ -103,7 +106,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     title: 'Check out this message!',
                 });
             } else {
-                // Fallback for browsers that don't support sharing files
+                // Fallback: Download the image
                 const dataUrl = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.href = dataUrl;
@@ -137,15 +140,6 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
         }
         lines.push(currentLine);
         return lines;
-    };
-
-    const loadImage = (src: string): Promise<HTMLImageElement> => {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = reject;
-            img.src = src;
-        });
     };
 
     const isLongMessage = message.content.length > 100;
