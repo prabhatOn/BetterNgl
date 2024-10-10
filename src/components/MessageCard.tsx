@@ -79,10 +79,10 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                             })
                             .catch((error) => console.error('Error sharing', error));
                     } else {
-                        navigator.clipboard.writeText('Sharing is not supported on this device.');
+                        // Fallback: Display image in modal or notify the user
                         toast({
                             title: 'Sharing not supported',
-                            description: 'Cannot share image directly from this device.',
+                            description: 'Sharing is not supported on this device.',
                         });
                     }
                 }
@@ -102,7 +102,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                 currentLine += ' ' + word;
             } else {
                 lines.push(currentLine);
-                currentLine = word;
+                currentLine = word.length > maxWidth ? word.slice(0, maxWidth) + '...' : word;
             }
         }
         lines.push(currentLine);
@@ -125,6 +125,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                         variant="secondary"
                         className="p-2 text-white hover:text-gray-300"
                         onClick={handleShare}
+                        aria-label="Share message"
                     >
                         <Share2 className="w-5 h-5" />
                     </Button>
@@ -132,7 +133,11 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                     {/* Delete Button */}
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" className="p-2 text-white hover:text-red-600">
+                            <Button
+                                variant="destructive"
+                                className="p-2 text-white hover:text-red-600"
+                                aria-label="Delete message"
+                            >
                                 <X className="w-5 h-5" />
                             </Button>
                         </AlertDialogTrigger>
@@ -167,14 +172,18 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
                 {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
             </div>
 
-            <CardContent className={`text-white font-body text-sm pt-4 pb-2 ${isFullMessageShown ? '' : 'max-h-40 overflow-hidden'}`}>
+            <CardContent
+                className={`text-white font-body text-sm pt-4 pb-2 ${
+                    isFullMessageShown ? '' : 'max-h-40 overflow-hidden'
+                }`}
+            >
                 {message.content}
-                {isLongMessage && !isFullMessageShown && (
+                {isLongMessage && (
                     <div
                         className="cursor-pointer text-gray-300 hover:text-white mt-2"
-                        onClick={() => setIsFullMessageShown(true)}
+                        onClick={() => setIsFullMessageShown(!isFullMessageShown)}
                     >
-                        Show more
+                        {isFullMessageShown ? 'Show less' : 'Show more'}
                     </div>
                 )}
             </CardContent>
