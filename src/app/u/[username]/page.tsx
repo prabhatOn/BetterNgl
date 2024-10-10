@@ -123,13 +123,13 @@ export default function FuturisticMessageUI() {
                 <link rel="canonical" href={`https://tbhfeedback.live/u/${username}`} />
                 <meta property="og:title" content={`Send Anonymous Messages to @${username}`} />
                 <meta property="og:description" content="Share your thoughts anonymously with a futuristic UI." />
-                <meta property="og:image" content="/public/favicon.png" />
+                <meta property="og:image" content="/favicon.png" />
                 <meta property="og:url" content={`https://tbhfeedback.live/u/${username}`} />
                 <meta property="og:type" content="website" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={`Send Anonymous Messages to @${username}`} />
                 <meta name="twitter:description" content="Share your thoughts anonymously with a futuristic UI." />
-                <meta name="twitter:image" content="/public/favicon.png" />
+                <meta name="twitter:image" content="/favicon.png" />
             </Head>
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
