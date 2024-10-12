@@ -82,10 +82,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
         />
       </head>
-      <Analytics/>
+      
       <AuthProvider>
         <body className={inter.className}>
           {children}
+          <Analytics/>
           <Toaster />
         </body>
       </AuthProvider>
