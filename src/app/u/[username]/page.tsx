@@ -117,26 +117,29 @@ export default function FuturisticMessageUI() {
         <>
             <Head>
                 <title>Send Anonymous Messages | Futuristic UI | @{username}</title>
-                <meta name="description" content="Send anonymous messages to @username with a futuristic and interactive UI. Share your thoughts privately and make your words count!" />
-                <meta name="keywords" content="anonymous messaging, futuristic UI, send anonymous messages, @${username}, secret messages, privacy, interactive design" />
+                <meta name="description" content="Share your thoughts with @${username} anonymously using our futuristic, interactive design. Your voice matters, and privacy is guaranteed!" />
+                <meta name="keywords" content="anonymous messages, futuristic UI, anonymous feedback, secret messaging, privacy, interactive UI, @${username}" />
                 <meta name="author" content="Prabhat Chaubey" />
                 <link rel="canonical" href={`https://tbhfeedback.live/u/${username}`} />
                 <meta property="og:title" content={`Send Anonymous Messages to @${username}`} />
-                <meta property="og:description" content="Share your thoughts anonymously with a futuristic UI." />
-                <meta property="og:image" content="/favicon.png" />
+                <meta property="og:description" content="Share your thoughts with @${username} anonymously through our sleek and futuristic UI." />
+                <meta property="og:image" content="/assets/og-image.png" />
+                <meta property="og:image:alt" content="Futuristic anonymous messaging interface" />
                 <meta property="og:url" content={`https://tbhfeedback.live/u/${username}`} />
                 <meta property="og:type" content="website" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={`Send Anonymous Messages to @${username}`} />
-                <meta name="twitter:description" content="Share your thoughts anonymously with a futuristic UI." />
-                <meta name="twitter:image" content="/favicon.png" />
+                <meta name="twitter:description" content="Send secret anonymous messages to @${username} with a sleek, futuristic interface." />
+                <meta name="twitter:image" content="/assets/twitter-image.png" />
+                <meta name="twitter:image:alt" content="Anonymous messaging UI for @${username}" />
             </Head>
+
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
                 <div ref={containerRef} className="w-full max-w-4xl relative z-10">
                     <div className="bg-zinc-900/50 backdrop-blur-xl shadow-2xl rounded-3xl transition-all duration-300 p-10">
                         <h1 className="text-3xl md:text-3xl font-extrabold text-center text-white animate-in">
-                            Send an Anonymous Message to 
+                            Send an Anonymous Message to
                             <span className="text-purple-600/50"> @{username}</span>
                         </h1>
                         <p className="text-zinc-400 mb-6 text-center animate-in">

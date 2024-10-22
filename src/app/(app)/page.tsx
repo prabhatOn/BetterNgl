@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import Head from "next/head"; // Import Head for SEO
+import Head from "next/head";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Loader } from "lucide-react";
 
-// Define BeforeInstallPromptEvent if it doesn't exist in the environment
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
     userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
@@ -60,11 +59,9 @@ export default function Home() {
     const handleButtonClick = (e: React.MouseEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate a loading delay (e.g., API request)
         setTimeout(() => {
             setLoading(false);
-            // Redirect or perform action here
-        }, 2000); // 2-second delay
+        }, 2000);
     };
 
     return (
@@ -73,18 +70,44 @@ export default function Home() {
             <Head>
                 <title>TBH: Real Feedback from Real People</title>
                 <meta name="description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
-                <meta name="keywords" content="anonymous feedback, real opinions, anonymous sharing, thoughts, tbh app, ngl alternative, tbh feedback, anonymous messaging" />
+                <meta name="keywords" content="anonymous feedback, real opinions, anonymous sharing, thoughts, tbh app, ngl alternative, tbh feedback, anonymous messaging, privacy feedback app, real feedback" />
                 <meta name="robots" content="index, follow" />
                 <meta name="author" content="TBH:Feedback" />
                 <meta property="og:title" content="TBH: Real Feedback from Real People" />
                 <meta property="og:description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
                 <meta property="og:url" content="https://tbhfeedback.live" />
                 <meta property="og:image" content="https://tbhfeedback.live/favicon.png" />
+                <meta property="og:type" content="website" />
+
+                {/* Twitter Card metadata */}
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:title" content="TBH: Real Feedback from Real People" />
                 <meta property="twitter:description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
                 <meta property="twitter:image" content="https://tbhfeedback.live/favicon.png" />
+                <link rel="canonical" href="https://tbhfeedback.live" />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "WebPage",
+                            "name": "TBH: Real Feedback from Real People",
+                            "description": "Join TBH and experience real, anonymous feedback with top-tier privacy and security features.",
+                            "url": "https://tbhfeedback.live",
+                            "image": "https://tbhfeedback.live/favicon.png",
+                            "publisher": {
+                                "@type": "Organization",
+                                "name": "TBH Feedback",
+                                "logo": {
+                                    "@type": "ImageObject",
+                                    "url": "https://tbhfeedback.live/favicon.png",
+                                },
+                            },
+                        }),
+                    }}
+                />
             </Head>
+
 
             <section className="relative z-10 px-4 pt-20 pb-16 md:pt-32 md:pb-24">
                 <div className="mx-auto max-w-6xl text-center">

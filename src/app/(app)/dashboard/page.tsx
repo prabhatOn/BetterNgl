@@ -87,8 +87,6 @@ function UserDashboard() {
 
         fetchMessages();
         fetchAcceptMessages();
-
-        // Background animation (optional)
         const bgAnimation = gsap.fromTo(
             containerRef.current,
             { backgroundColor: '#000' },
@@ -161,7 +159,6 @@ function UserDashboard() {
 
     return (
         <>
-            {/* SEO Optimization */}
             <Head>
                 <title>User Dashboard | Your Profile & Messages</title>
                 <meta
@@ -170,12 +167,34 @@ function UserDashboard() {
                 />
                 <meta name="robots" content="index, follow" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta name="keywords" content="user dashboard, profile management, messages, anonymous feedback, tbh feedback, tbh app" />
                 <link rel="canonical" href={profileUrl} />
+
                 <meta property="og:title" content="User Dashboard | Your Profile & Messages" />
                 <meta property="og:description" content="Manage your profile and messages easily on your personalized User Dashboard." />
                 <meta property="og:url" content={profileUrl} />
                 <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://tbhfeedback.live/dashboard-thumbnail.png" />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
+                <meta property="og:locale" content="en_US" />
+
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="User Dashboard | Manage Profile & Messages" />
+                <meta name="twitter:description" content="View your profile, respond to messages, and share your unique link from the User Dashboard." />
+                <meta name="twitter:image" content="https://tbhfeedback.live/dashboard-thumbnail.png" />
+
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "User Dashboard",
+                        "description": "Manage your profile, view and respond to messages, and share your unique link from the User Dashboard.",
+                        "url": profileUrl
+                    })}
+                </script>
             </Head>
+
 
             <div
                 ref={containerRef}
@@ -187,8 +206,6 @@ function UserDashboard() {
                         <h1 className="text-4xl font-bold mb-8 text-white font-display">
                             User Dashboard
                         </h1>
-
-                        {/* Unique Link Section */}
                         <div className="mb-10 bg-zinc-800/50 p-6 rounded-lg">
                             <h2 className="text-2xl font-semibold mb-4 text-white font-display">
                                 Your Unique Link
@@ -219,8 +236,6 @@ function UserDashboard() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Accept Messages Switch */}
                         <div className="mb-10 flex items-center justify-between bg-zinc-800/50 p-6 rounded-lg">
                             <div className="flex items-center space-x-4">
                                 <Switch
@@ -242,7 +257,6 @@ function UserDashboard() {
 
                         <Separator className="my-8 bg-zinc-700" />
 
-                        {/* Messages Section */}
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-3xl font-semibold text-white font-display">
                                 Your Messages

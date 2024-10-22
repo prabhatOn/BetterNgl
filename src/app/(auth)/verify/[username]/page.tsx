@@ -24,6 +24,7 @@ import { Loader2, CheckCircle } from 'lucide-react';
 import InteractiveBackground from '@/components/ui/InteractiveBackground';
 import Link from 'next/link';
 import React from 'react';
+import Head from 'next/head';
 
 export default function VerifyAccount() {
     const router = useRouter();
@@ -31,7 +32,6 @@ export default function VerifyAccount() {
     const { toast } = useToast();
     const containerRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
-
     const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),
     });
@@ -54,7 +54,7 @@ export default function VerifyAccount() {
             toast({
                 title: 'Verification Failed',
                 description:
-                    axiosError.response?.data.message ?? 
+                    axiosError.response?.data.message ??
                     'An error occurred. Please try again.',
                 variant: 'destructive',
             });
@@ -100,23 +100,59 @@ export default function VerifyAccount() {
 
     return (
         <>
-            <head>
-                <title>Verify Your Account | [Website Name]</title>
-                <meta name="description" content="Verify your account on [Website Name]. Enter the verification code sent to your email to secure your account." />
-                <meta property="og:title" content="Verify Your Account on [Website Name]" />
-                <meta property="og:description" content="Secure your account by entering the verification code sent to your email." />
-                <meta property="og:url" content="[URL of this page]" />
-                <meta property="og:type" content="website" />
+            <Head>
+                <title>Verify Your Account | TBH Feedback</title>
+                <meta
+                    name="description"
+                    content={`Verify your account on TBH Feedback. Enter the verification code sent to your email to secure your account, ${params.username}.`}
+                />
+                <meta
+                    property="og:title"
+                    content={`Verify Your Account on TBH Feedback, ${params.username}`}
+                />
+                <meta
+                    property="og:description"
+                    content={`Secure your TBH Feedback account, ${params.username}, by entering the verification code sent to your email.`}
+                />
+                <meta
+                    property="og:url"
+                    content={`https://www.tbhfeedback.live/verify/${params.username}`}
+                />
+                <meta
+                    property="og:type"
+                    content="website"
+                />
+
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta
+                    name="twitter:title"
+                    content={`Verify Your Account | TBH Feedback, ${params.username}`}
+                />
+                <meta
+                    name="twitter:description"
+                    content={`Verify your account, ${params.username}, by entering the code sent to your email.`}
+                />
+                <meta
+                    name="twitter:image"
+                    content="https://www.tbhfeedback.live/favicon.png"
+                />
+
+                <link
+                    rel="canonical"
+                    href={`https://www.tbhfeedback.live/verify/${params.username}`}
+                />
+
                 <script type="application/ld+json">
-                {`{
-                  "@context": "https://schema.org",
-                  "@type": "WebPage",
-                  "name": "Verify Your Account",
-                  "description": "Enter the verification code sent to your email to verify your account on [Website Name].",
-                  "url": "[URL of this page]"
-                }`}
+                    {`{
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              "name": "Verify Your Account",
+              "description": "Enter the verification code sent to your email to verify your account on TBH Feedback.",
+              "url": "https://www.tbhfeedback.live/verify/${params.username}"
+            }`}
                 </script>
-            </head>
+            </Head>
+            
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
                 <div ref={containerRef} className="w-full max-w-md relative z-10">

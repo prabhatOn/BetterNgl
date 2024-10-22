@@ -138,14 +138,32 @@ export default function SignUpForm() {
     return (
         <>
             <Head>
-                <meta name="description" content="Sign up to TBH for anonymous messaging, secret conversations, and a futuristic interactive experience. Start your anonymous adventure now." />
-                <meta name="keywords" content="Sign Up, Anonymous Messaging, Secret Conversations, TBH App, Interactive UI" />
-                <meta property="og:title" content="Sign Up | TBH" />
+                <title>Sign Up | TBH Anonymous Messaging</title>
+                <meta name="description" content="Sign up for TBH, the leading anonymous messaging platform. Engage in secret conversations with enhanced privacy and a futuristic interactive experience. Start your anonymous journey now!" />
+                <meta name="keywords" content="Sign Up, Anonymous Messaging, Secret Conversations, TBH, Interactive UI, private messaging, secure chat" />
+
+                <meta property="og:title" content="Sign Up | TBH Anonymous Messaging" />
                 <meta property="og:description" content="Join TBH and start your anonymous adventure. Sign up now for secret conversations with an interactive experience." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://www.tbhfeedback.live/sign-up" />
-                <meta property="og:image" content="/favicon.png" />
+                <meta property="og:image" content="https://www.tbhfeedback.live/favicon.png" />
+
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Sign Up | TBH Anonymous Messaging" />
+                <meta name="twitter:description" content="Join TBH and begin your anonymous journey. Sign up for private conversations and a secure, interactive experience." />
+                <meta name="twitter:image" content="https://www.tbhfeedback.live/favicon.png" />
+
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "Sign Up | TBH Anonymous Messaging",
+                        "description": "Sign up to TBH, the anonymous messaging platform, and start engaging in secure secret conversations with a futuristic, interactive experience.",
+                        "url": "https://www.tbhfeedback.live/sign-up"
+                    })}
+                </script>
             </Head>
+
 
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black text-white">
                 <InteractiveBackground />

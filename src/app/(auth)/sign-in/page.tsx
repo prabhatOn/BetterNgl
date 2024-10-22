@@ -113,30 +113,43 @@ export default function SignInForm() {
                 <title>Sign In | TBH Anonymous Messaging</title>
                 <meta
                     name="description"
-                    content="Sign in to TBH, the anonymous messaging platform, to continue sending and receiving secret messages."
+                    content="Sign in to TBH, the anonymous messaging platform, and continue sending and receiving secret messages securely and privately."
                 />
                 <meta
                     name="keywords"
-                    content="sign in, login, anonymous messaging, TBH, secret conversations"
+                    content="sign in, login, anonymous messaging, TBH, secret conversations, private messaging, secure chat, anonymous feedback"
                 />
-                <meta name="author" content="Prabhat chaubey" />
+                <meta name="author" content="TBH Feedback" />
                 <link rel="canonical" href="https://tbhfeedback.live/sign-in" />
+
                 <meta property="og:title" content="Sign In to TBH Anonymous Messaging" />
                 <meta
                     property="og:description"
-                    content="Sign in to TBH to continue your secret conversations anonymously."
+                    content="Sign in to TBH to continue your secret conversations anonymously and securely."
                 />
-                <meta property="og:image" content="/favicon.png" />
+                <meta property="og:image" content="https://tbhfeedback.live/favicon.png" />
                 <meta property="og:url" content="https://tbhfeedback.live/sign-in" />
                 <meta property="og:type" content="website" />
+
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="Sign In to TBH Anonymous Messaging" />
                 <meta
                     name="twitter:description"
-                    content="Sign in to TBH to continue your anonymous conversations."
+                    content="Sign in to TBH to continue your anonymous conversations with privacy."
                 />
-                <meta name="twitter:image" content="/favicon.png" />
+                <meta name="twitter:image" content="https://tbhfeedback.live/favicon.png" />
+
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "Sign In | TBH Anonymous Messaging",
+                        "description": "Sign in to TBH, the anonymous messaging platform, to continue sending and receiving secret messages securely.",
+                        "url": "https://tbhfeedback.live/sign-in"
+                    })}
+                </script>
             </Head>
+
             <div className="relative w-full min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden bg-black">
                 <InteractiveBackground />
                 <div ref={containerRef} className="w-full max-w-md relative z-10">

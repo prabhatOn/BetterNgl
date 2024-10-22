@@ -9,7 +9,12 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'TBH:Feedback from Real People',
   description: 'Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers,NGL alternative, TBH feedback, Anonymous messaging, Anonymous sharing, Real opinions, Real feedback, Real thoughts, Real feelings, express yourself, tbh app,tbh,Tbh, tbh feedback',
-  keywords: ['anonymous feedback', 'real opinions', 'anonymous sharing', 'thoughts', 'tbh app', 'ngl alternative', 'tbh feedback', 'anonymous messaging', 'real feedback', 'real feelings', 'express yourself', 'tbh', 'tbh feedback',"ngl","ngl feedback","ngl app","ngl alternative","ngl feedback app","ngl feedback website","ngl feedback site","ngl feedback online","ngl feedback online","ngl feedback anonymous","ngl feedback real","ngl feedback real opinions","ngl feedback real thoughts","ngl feedback real feelings","ngl feedback express yourself","ngl feedback app","ngl feedback tbh","ngl feedback tbh app","ngl feedback tbh website","ngl feedback tbh site","ngl feedback tbh online","ngl feedback tbh online","ngl feedback tbh anonymous","ngl feedback tbh real","ngl feedback tbh real opinions","ngl feedback tbh real thoughts","ngl feedback tbh real feelings","ngl feedback tbh express yourself","tbh feelings","messaging",'anonymous messaging','anonymous sharing','real opinions','real feedback','real thoughts','real feelings','express yourself','tbh app','tbh','tbh feedback'],
+  keywords: [
+    'anonymous feedback', 'real opinions', 'anonymous sharing', 'thoughts', 'tbh app', 
+    'ngl alternative', 'tbh feedback', 'anonymous messaging', 'real feedback', 'real feelings', 
+    'express yourself', 'tbh', 'tbh feedback', 'ngl feedback', 'ngl app', 'ngl alternative', 
+    'tbh app', 'anonymous feedback real'
+  ],
   robots: 'index, follow',
   openGraph: {
     title: 'TBH: Feedback from Real People',
@@ -19,7 +24,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://tbhfeedback.live/favicon.png', // Make sure this is the correct path to your image
+        url: 'https://tbhfeedback.live/favicon.png', 
         width: 1200,
         height: 630,
         alt: 'TBH:Feedback from Real People',
@@ -38,9 +43,10 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: 'https://tbhfeedback.live',
+    canonical: 'https://tbhfeedback.live', 
   },
 };
+
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -57,6 +63,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
       "@type": "SearchAction",
       "target": "https://tbhfeedback.live/search?q={search_term_string}",
       "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "TBH Feedback",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://tbhfeedback.live/favicon.png"
+      }
     }
   };
 
@@ -75,8 +89,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
-
-        {/* Structured Data */}
+        <link rel="canonical" href={`https://tbhfeedback.live${window.location.pathname}`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
