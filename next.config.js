@@ -47,10 +47,6 @@ const withPWA = require('next-pwa')({
     ],
 });
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-    enabled: process.env.ANALYZE === 'true',
-});
-
 const nextConfig = {
     eslint: {
         ignoreDuringBuilds: true,
@@ -123,4 +119,4 @@ const nextConfig = {
     },
 };
 
-module.exports = withBundleAnalyzer(withPWA(nextConfig));
+module.exports = withPWA(nextConfig);

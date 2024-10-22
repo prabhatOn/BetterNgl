@@ -3,28 +3,28 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import AuthProvider from '../context/AuthProvider';
 import { Toaster } from '@/components/ui/toaster';
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'TBH:Feedback from Real People',
-  description: 'Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers,NGL alternative, TBH feedback, Anonymous messaging, Anonymous sharing, Real opinions, Real feedback, Real thoughts, Real feelings, express yourself, tbh app,tbh,Tbh, tbh feedback',
+  description: 'Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers, NGL alternative, TBH feedback.',
   keywords: [
     'anonymous feedback', 'real opinions', 'anonymous sharing', 'thoughts', 'tbh app', 
     'ngl alternative', 'tbh feedback', 'anonymous messaging', 'real feedback', 'real feelings', 
-    'express yourself', 'tbh', 'tbh feedback', 'ngl feedback', 'ngl app', 'ngl alternative', 
-    'tbh app', 'anonymous feedback real'
+    'express yourself', 'tbh', 'ngl feedback', 'ngl app'
   ],
   robots: 'index, follow',
   openGraph: {
     title: 'TBH: Feedback from Real People',
-    description: 'Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers.',
+    description: 'Anonymously share your thoughts, feelings, and opinions.',
     url: 'https://tbhfeedback.live',
     siteName: 'TBH Feedback',
     type: 'website',
     images: [
       {
-        url: 'https://tbhfeedback.live/favicon.png', 
+        url: 'https://tbhfeedback.live/favicon.png',
         width: 1200,
         height: 630,
         alt: 'TBH:Feedback from Real People',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'TBH: Feedback from Real People',
-    description: 'Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers.',
+    description: 'Anonymously share your thoughts, feelings, and opinions.',
     images: [
       {
         url: 'https://tbhfeedback.live/favicon.png',
@@ -43,22 +43,25 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: 'https://tbhfeedback.live', 
+    canonical: 'https://tbhfeedback.live',
   },
 };
 
-
 interface RootLayoutProps {
   children: React.ReactNode;
+  params: { [key: string]: any }; // Update this type as needed
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children, params }: RootLayoutProps) {
+  // Generate the canonical URL based on the current pathname
+  const canonicalUrl = `https://tbhfeedback.live${params.path ? `/${params.path}` : ''}`;
+
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "url": "https://tbhfeedback.live",
     "name": "TBH : Feedback",
-    "description": "Anonymously share your thoughts, feelings, and opinions. Get real, unfiltered feedback from your friends or followers.",
+    "description": "Anonymously share your thoughts, feelings, and opinions.",
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://tbhfeedback.live/search?q={search_term_string}",
@@ -89,17 +92,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
-        <link rel="canonical" href={`https://tbhfeedback.live${window.location.pathname}`} />
+        <link rel="canonical" href={canonicalUrl} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
         />
       </head>
-      
       <AuthProvider>
         <body className={inter.className}>
           {children}
-          <Analytics/>
+          <Analytics />
           <Toaster />
         </body>
       </AuthProvider>
