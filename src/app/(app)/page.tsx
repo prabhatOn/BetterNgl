@@ -1,51 +1,39 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Loader } from "lucide-react";
-
+import { ChevronRight, Loader, X } from "lucide-react";
+import FeatureCard from "@/components/ui/FeatureCard"; 
+import ExampleMessage from "@/components/ui/ExampleMessage";
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
     userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
-
-const FeatureCard = ({ title, description }: { title: string; description: string }) => (
-    <div className="relative z-10 rounded-lg bg-zinc-900/50 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-zinc-800/50">
-        <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
-        <p className="text-zinc-400">{description}</p>
-    </div>
-);
-
-const ExampleMessage = ({ content }: { content: string }) => (
-    <div className="relative z-10 rounded-lg bg-zinc-800/50 backdrop-blur-sm p-4 text-zinc-300">
-        {content}
-    </div>
-);
 
 export default function Home() {
     const [loading, setLoading] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
-    // Define the event handler as a stable reference
+    // Event handler for the beforeinstallprompt event
     const handleBeforeInstallPrompt = useCallback((e: BeforeInstallPromptEvent) => {
         e.preventDefault();
         setDeferredPrompt(e);
         setShowInstallPrompt(true);
     }, []);
 
+    // Register and unregister the event listener for beforeinstallprompt
     useEffect(() => {
-        // Listen for the beforeinstallprompt event
         window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
 
-        // Cleanup event listener on component unmount
         return () => {
             window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
         };
     }, [handleBeforeInstallPrompt]);
 
+    // Handle the install prompt click
     const handleInstallClick = async () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -56,6 +44,7 @@ export default function Home() {
         }
     };
 
+    // Handle button click to show loading state
     const handleButtonClick = (e: React.MouseEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -64,9 +53,13 @@ export default function Home() {
         }, 2000);
     };
 
+    // Close the install prompt
+    const handleCloseInstallPrompt = () => {
+        setShowInstallPrompt(false);
+    };
+
     return (
         <div className="min-h-screen bg-black text-white font-sans relative">
-            {/* SEO Header */}
             <Head>
                 <title>TBH: Real Feedback from Real People</title>
                 <meta name="description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
@@ -78,8 +71,6 @@ export default function Home() {
                 <meta property="og:url" content="https://tbhfeedback.live" />
                 <meta property="og:image" content="https://tbhfeedback.live/favicon.png" />
                 <meta property="og:type" content="website" />
-
-                {/* Twitter Card metadata */}
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:title" content="TBH: Real Feedback from Real People" />
                 <meta property="twitter:description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
@@ -108,14 +99,14 @@ export default function Home() {
                 />
             </Head>
 
-
             <section className="relative z-10 px-4 pt-20 pb-16 md:pt-32 md:pb-24">
                 <div className="mx-auto max-w-6xl text-center">
                     <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-display">
                         Discover Authentic Feedback with TBH: Your Trusted Platform for Honest Conversations
                     </h1>
-                    <p className="mb-10 text-xl text-zinc-400 sm:text-2xl font-body">
-                        Join TBH and experience real, anonymous feedback with top-tier privacy and security features. Share your thoughts and opinions, and get unfiltered, authentic responses from your peers or followers.
+                    <p className="mb-10 text-xl text-zinc-300 sm:text-2xl font-body">
+                        Join TBH and experience real, anonymous feedback with top-tier privacy and security features. Share
+                        your thoughts and opinions, and get unfiltered, authentic responses from your peers or followers.
                     </p>
                     <Button
                         size="lg"
@@ -143,18 +134,20 @@ export default function Home() {
                         Why TBH is the Best Platform for Anonymous, Secure, and Honest Feedback
                     </h2>
                     <div className="grid gap-8 md:grid-cols-3">
-                        <FeatureCard
-                            title="Enhanced Privacy & Security"
-                            description="Advanced encryption technology and anonymity tools to safeguard your identity online."
-                        />
-                        <FeatureCard
-                            title="Honest and Unbiased Feedback"
-                            description="Foster a space where users feel empowered to share their genuine thoughts without fear of judgment."
-                        />
-                        <FeatureCard
-                            title="User-Friendly Design"
-                            description="Enjoy an intuitive, easy-to-use interface crafted for seamless communication and feedback sharing."
-                        />
+                        <Suspense fallback={<Loader className="animate-spin h-6 w-6 text-zinc-400 mx-auto" />}>
+                            <FeatureCard
+                                title="Enhanced Privacy & Security"
+                                description="Advanced encryption technology and anonymity tools to safeguard your identity online."
+                            />
+                            <FeatureCard
+                                title="Honest and Unbiased Feedback"
+                                description="Foster a space where users feel empowered to share their genuine thoughts without fear of judgment."
+                            />
+                            <FeatureCard
+                                title="User-Friendly Design"
+                                description="Enjoy an intuitive, easy-to-use interface crafted for seamless communication and feedback sharing."
+                            />
+                        </Suspense>
                     </div>
                 </div>
             </section>
@@ -165,8 +158,10 @@ export default function Home() {
                         Real-World Honest Feedback You Can Use for Personal Growth
                     </h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <ExampleMessage content="Your presentation was engaging and insightful; however, incorporating more concrete examples could make it even more impactful." />
-                        <ExampleMessage content="I truly appreciate your hard work. That said, enhancing communication within the team would boost overall efficiency and collaboration." />
+                        <Suspense fallback={<Loader className="animate-spin h-6 w-6 text-zinc-400 mx-auto" />}>
+                            <ExampleMessage content="Your presentation was engaging and insightful; however, incorporating more concrete examples could make it even more impactful." />
+                            <ExampleMessage content="I truly appreciate your hard work. That said, enhancing communication within the team would boost overall efficiency and collaboration." />
+                        </Suspense>
                     </div>
                 </div>
             </section>
@@ -176,8 +171,9 @@ export default function Home() {
                     <h2 className="mb-6 text-3xl font-bold sm:text-4xl font-display">
                         Ready to Receive Honest, Unfiltered Feedback? Start Now!
                     </h2>
-                    <p className="mb-10 text-xl text-zinc-400 font-body">
-                        Sign up for TBH and begin sharing your thoughts and opinions with full privacy and anonymity. Experience the power of real feedback that helps you grow and improve.
+                    <p className="mb-10 text-xl text-zinc-300 font-body">
+                        Sign up for TBH and begin sharing your thoughts and opinions with full privacy and anonymity. Experience
+                        the power of real feedback that helps you grow and improve.
                     </p>
                     <Button
                         size="lg"
@@ -202,7 +198,16 @@ export default function Home() {
             {/* Install Prompt Section */}
             {showInstallPrompt && (
                 <div className="fixed bottom-4 right-4 z-20 p-4 bg-zinc-800 rounded-lg shadow-lg">
-                    <p className="text-white mb-2">Want to install the TBH app?</p>
+                    <div className="flex justify-between items-center mb-2">
+                        <p className="text-white">Want to install the TBH app?</p>
+                        <button
+                            onClick={handleCloseInstallPrompt}
+                            className="text-white bg-zinc-700 p-1 rounded-full hover:bg-zinc-600"
+                            aria-label="Close install prompt"
+                        >
+                            <X />
+                        </button>
+                    </div>
                     <Button onClick={handleInstallClick} className="bg-blue-600">
                         Install
                     </Button>
@@ -211,7 +216,8 @@ export default function Home() {
 
             <footer className="relative z-10 px-4 py-6 text-center text-zinc-500 border-t border-zinc-800">
                 <p className="font-body">
-                    © 2024 TBH. TBH is transforming the way people share their thoughts, opinions, and feelings anonymously. Join the revolution in anonymous feedback today and see how authentic communication can drive personal growth.
+                    © 2024 TBH. TBH is transforming the way people share their thoughts, opinions, and feelings anonymously.
+                    Join the revolution in anonymous feedback today and see how authentic communication can drive personal growth.
                 </p>
             </footer>
         </div>
