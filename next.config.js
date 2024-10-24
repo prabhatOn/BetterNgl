@@ -9,7 +9,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'google-fonts',
                 expiration: {
                     maxEntries: 10,
-                    maxAgeSeconds: 365 * 24 * 60 * 60,
+                    maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -23,7 +23,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'jsdelivr',
                 expiration: {
                     maxEntries: 20,
-                    maxAgeSeconds: 365 * 24 * 60 * 60,
+                    maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -37,7 +37,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'images',
                 expiration: {
                     maxEntries: 50,
-                    maxAgeSeconds: 30 * 24 * 60 * 60,
+                    maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -52,7 +52,7 @@ const withPWA = require('next-pwa')({
                 networkTimeoutSeconds: 10,
                 expiration: {
                     maxEntries: 30,
-                    maxAgeSeconds: 60 * 60 * 24, 
+                    maxAgeSeconds: 60 * 60 * 24, // 1 day
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -60,13 +60,13 @@ const withPWA = require('next-pwa')({
             },
         },
         {
-            urlPattern: /.*/i, 
+            urlPattern: /.*/i, // Fallback for all other requests
             handler: 'NetworkFirst',
             options: {
                 cacheName: 'fallback-cache',
                 expiration: {
                     maxEntries: 30,
-                    maxAgeSeconds: 60 * 60 * 24, 
+                    maxAgeSeconds: 60 * 60 * 24, // 1 day
                 },
             },
         },
@@ -95,30 +95,28 @@ const nextConfig = {
     webpack(config) {
         config.optimization.splitChunks = {
             cacheGroups: {
-                framework: {
-                    chunks: 'all',
-                    name: 'framework',
-                    test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
-                    priority: 40,
-                    enforce: true,
+            framework: {
+                chunks: 'all',
+                name: 'framework',
+                test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
+                priority: 40,
+                enforce: true,
+            },
+            commons: {
+                name: 'commons',
+                minChunks: 2,
+                chunks: 'all',
+                reuseExistingChunk: true,
+            },
+            vendors: {
+                test: /[\\/]node_modules[\\/]/,
+                chunks: 'all',
+                priority: -10,
+                name(module) {
+                const match = module.context?.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/); // Optional chaining
+                return match && match[1] ? `npm.${match[1].replace('@', '')}` : 'unknown'; // Handle null case
                 },
-                commons: {
-                    name: 'commons',
-                    minChunks: 2,
-                    chunks: 'all',
-                    reuseExistingChunk: true,
-                },
-                vendors: {
-                    test: /[\\/]node_modules[\\/]/,
-                    chunks: 'all',
-                    priority: -10,
-                    name(module) {
-                        const packageName = module.context.match(
-                            /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-                        )[1];
-                        return `npm.${packageName.replace('@', '')}`;
-                    },
-                },
+            },
             },
         };
 
@@ -132,17 +130,6 @@ const nextConfig = {
         domains: ['images.unsplash.com', 'cdn.jsdelivr.net'],
         deviceSizes: [640, 768, 1024, 1280, 1600, 1920],
         formats: ['image/webp'],
-        lazyBoundary: '200px', 
-    },
-
-    pwa: {
-        disable: process.env.NODE_ENV === 'development',
-        register: true,
-        skipWaiting: true,
-        dynamicStartUrl: true,
-        fallbacks: {
-            image: '/offline-image.png', 
-        },
     },
 };
 
