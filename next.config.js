@@ -9,7 +9,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'google-fonts',
                 expiration: {
                     maxEntries: 10,
-                    maxAgeSeconds: 365 * 24 * 60 * 60,
+                    maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -23,7 +23,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'jsdelivr',
                 expiration: {
                     maxEntries: 20,
-                    maxAgeSeconds: 365 * 24 * 60 * 60,
+                    maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -41,7 +41,8 @@ const nextConfig = {
     async headers() {
         return [
             {
-                source: '/:all*(js|css|svg|png|jpg|jpeg|gif)',
+                // Cache static resources for 1 year
+                source: '/:all*(js|css|svg|png|jpg|jpeg|gif|woff2|ttf|eot)',
                 headers: [
                     {
                         key: 'Cache-Control',
