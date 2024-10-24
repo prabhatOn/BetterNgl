@@ -79,6 +79,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
   return (
     <html lang="en">
       <head>
+       <meta name="msvalidate.01" content="13D88686E5CFA3330651AA0A9D045739" />
         <meta name="google-site-verification" content="qhgaXcxNf_Nb1XyEIC0my4_ydB7WfJ78yHE76erBx0s" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
