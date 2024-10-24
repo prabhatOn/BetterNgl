@@ -38,7 +38,7 @@ const nextConfig = {
         ignoreDuringBuilds: true,
     },
     experimental: {
-        modern: true, 
+        modern: true, // Enable modern JavaScript
     },
 
     async headers() {
@@ -55,7 +55,7 @@ const nextConfig = {
         ];
     },
 
-    webpack(config) {
+    webpack(config, { isServer }) {
         config.optimization.splitChunks = {
             cacheGroups: {
                 framework: {
@@ -74,6 +74,10 @@ const nextConfig = {
             },
         };
 
+        if (!isServer) {
+            config.resolve.alias['@sentry/node'] = '@sentry/browser';
+        }
+
         return config;
     },
 
@@ -87,4 +91,20 @@ const nextConfig = {
     },
 };
 
-module.exports = withPWA(nextConfig);
+// Babel configuration for modern JavaScript
+module.exports = withPWA({
+    ...nextConfig,
+    babel: {
+        presets: [
+            [
+                '@babel/preset-env',
+                {
+                    targets: '>0.25%, not dead, not IE 11',
+                    useBuiltIns: 'usage', 
+                    corejs: 3, 
+                },
+            ],
+            '@babel/preset-react',
+        ],
+    },
+});
