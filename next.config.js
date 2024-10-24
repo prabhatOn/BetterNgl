@@ -30,6 +30,46 @@ const withPWA = require('next-pwa')({
                 },
             },
         },
+        {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
+            handler: 'CacheFirst',
+            options: {
+                cacheName: 'images',
+                expiration: {
+                    maxEntries: 50,
+                    maxAgeSeconds: 30 * 24 * 60 * 60,
+                },
+                cacheableResponse: {
+                    statuses: [0, 200],
+                },
+            },
+        },
+        {
+            urlPattern: /\/api\/.*$/i,
+            handler: 'NetworkFirst',
+            options: {
+                cacheName: 'api-calls',
+                networkTimeoutSeconds: 10,
+                expiration: {
+                    maxEntries: 30,
+                    maxAgeSeconds: 60 * 60 * 24, 
+                },
+                cacheableResponse: {
+                    statuses: [0, 200],
+                },
+            },
+        },
+        {
+            urlPattern: /.*/i, 
+            handler: 'NetworkFirst',
+            options: {
+                cacheName: 'fallback-cache',
+                expiration: {
+                    maxEntries: 30,
+                    maxAgeSeconds: 60 * 60 * 24, 
+                },
+            },
+        },
     ],
 });
 
@@ -41,7 +81,7 @@ const nextConfig = {
     async headers() {
         return [
             {
-                source: '/:all*(js|css|svg|png|jpg|jpeg|gif)',
+                source: '/:all*(js|css|svg|png|jpg|jpeg|gif|webp)',
                 headers: [
                     {
                         key: 'Cache-Control',
@@ -68,6 +108,17 @@ const nextConfig = {
                     chunks: 'all',
                     reuseExistingChunk: true,
                 },
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    chunks: 'all',
+                    priority: -10,
+                    name(module) {
+                        const packageName = module.context.match(
+                            /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                        )[1];
+                        return `npm.${packageName.replace('@', '')}`;
+                    },
+                },
             },
         };
 
@@ -81,6 +132,17 @@ const nextConfig = {
         domains: ['images.unsplash.com', 'cdn.jsdelivr.net'],
         deviceSizes: [640, 768, 1024, 1280, 1600, 1920],
         formats: ['image/webp'],
+        lazyBoundary: '200px', 
+    },
+
+    pwa: {
+        disable: process.env.NODE_ENV === 'development',
+        register: true,
+        skipWaiting: true,
+        dynamicStartUrl: true,
+        fallbacks: {
+            image: '/offline-image.png', 
+        },
     },
 };
 
