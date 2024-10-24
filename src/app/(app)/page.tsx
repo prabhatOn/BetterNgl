@@ -61,7 +61,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-black text-white font-sans relative">
             <Head>
-                <title>TBH: Real Feedback from Real People</title>
+                <title>TBH Feedback from Real People</title>
                 <meta name="description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
                 <meta name="keywords" content="anonymous feedback, real opinions, anonymous sharing, thoughts, tbh app, ngl alternative, tbh feedback, anonymous messaging, privacy feedback app, real feedback" />
                 <meta name="robots" content="index, follow" />
