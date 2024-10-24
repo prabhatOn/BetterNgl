@@ -23,21 +23,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'jsdelivr',
                 expiration: {
                     maxEntries: 20,
-                    maxAgeSeconds: 60 * 60 * 24 * 365,
-                },
-                cacheableResponse: {
-                    statuses: [0, 200],
-                },
-            },
-        },
-        {
-            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-                cacheName: 'unsplash-images',
-                expiration: {
-                    maxEntries: 50,
-                    maxAgeSeconds: 30 * 24 * 60 * 60,
+                    maxAgeSeconds: 365 * 24 * 60 * 60,
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -66,42 +52,21 @@ const nextConfig = {
         ];
     },
 
-    webpack(config, { isServer }) {
-        if (!isServer) {
-            config.target = ['web', 'es2017'];
-            config.resolve.alias = {
-                ...config.resolve.alias,
-                'core-js': false,
-            };
-        }
-
-        config.optimization = {
-            ...config.optimization,
-            splitChunks: {
-                cacheGroups: {
-                    default: false,
-                    vendors: false,
-                    framework: {
-                        chunks: 'all',
-                        name: 'framework',
-                        test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
-                        priority: 40,
-                        enforce: true,
-                    },
-                    commons: {
-                        name: 'commons',
-                        minChunks: 2,
-                        chunks: 'all',
-                        reuseExistingChunk: true,
-                    },
-                    lib: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name(module) {
-                            const match = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
-                            return match ? `lib.${match[1].replace('@', '')}` : 'lib.unknown'; 
-                        },
-                        chunks: 'all',
-                    },
+    webpack(config) {
+        config.optimization.splitChunks = {
+            cacheGroups: {
+                framework: {
+                    chunks: 'all',
+                    name: 'framework',
+                    test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
+                    priority: 40,
+                    enforce: true,
+                },
+                commons: {
+                    name: 'commons',
+                    minChunks: 2,
+                    chunks: 'all',
+                    reuseExistingChunk: true,
                 },
             },
         };
@@ -118,4 +83,5 @@ const nextConfig = {
         formats: ['image/webp'],
     },
 };
+
 module.exports = withPWA(nextConfig);
