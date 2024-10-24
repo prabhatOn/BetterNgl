@@ -9,7 +9,7 @@ const withPWA = require('next-pwa')({
                 cacheName: 'google-fonts',
                 expiration: {
                     maxEntries: 10,
-                    maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+                    maxAgeSeconds: 365 * 24 * 60 * 60,
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
@@ -23,50 +23,10 @@ const withPWA = require('next-pwa')({
                 cacheName: 'jsdelivr',
                 expiration: {
                     maxEntries: 20,
-                    maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+                    maxAgeSeconds: 365 * 24 * 60 * 60,
                 },
                 cacheableResponse: {
                     statuses: [0, 200],
-                },
-            },
-        },
-        {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
-            handler: 'CacheFirst',
-            options: {
-                cacheName: 'images',
-                expiration: {
-                    maxEntries: 50,
-                    maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-                },
-                cacheableResponse: {
-                    statuses: [0, 200],
-                },
-            },
-        },
-        {
-            urlPattern: /\/api\/.*$/i,
-            handler: 'NetworkFirst',
-            options: {
-                cacheName: 'api-calls',
-                networkTimeoutSeconds: 10,
-                expiration: {
-                    maxEntries: 30,
-                    maxAgeSeconds: 60 * 60 * 24, // 1 day
-                },
-                cacheableResponse: {
-                    statuses: [0, 200],
-                },
-            },
-        },
-        {
-            urlPattern: /.*/i, // Fallback for all other requests
-            handler: 'NetworkFirst',
-            options: {
-                cacheName: 'fallback-cache',
-                expiration: {
-                    maxEntries: 30,
-                    maxAgeSeconds: 60 * 60 * 24, // 1 day
                 },
             },
         },
@@ -81,7 +41,7 @@ const nextConfig = {
     async headers() {
         return [
             {
-                source: '/:all*(js|css|svg|png|jpg|jpeg|gif|webp)',
+                source: '/:all*(js|css|svg|png|jpg|jpeg|gif)',
                 headers: [
                     {
                         key: 'Cache-Control',
@@ -95,28 +55,19 @@ const nextConfig = {
     webpack(config) {
         config.optimization.splitChunks = {
             cacheGroups: {
-            framework: {
-                chunks: 'all',
-                name: 'framework',
-                test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
-                priority: 40,
-                enforce: true,
-            },
-            commons: {
-                name: 'commons',
-                minChunks: 2,
-                chunks: 'all',
-                reuseExistingChunk: true,
-            },
-            vendors: {
-                test: /[\\/]node_modules[\\/]/,
-                chunks: 'all',
-                priority: -10,
-                name(module) {
-                const match = module.context?.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/); // Optional chaining
-                return match && match[1] ? `npm.${match[1].replace('@', '')}` : 'unknown'; // Handle null case
+                framework: {
+                    chunks: 'all',
+                    name: 'framework',
+                    test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
+                    priority: 40,
+                    enforce: true,
                 },
-            },
+                commons: {
+                    name: 'commons',
+                    minChunks: 2,
+                    chunks: 'all',
+                    reuseExistingChunk: true,
+                },
             },
         };
 
