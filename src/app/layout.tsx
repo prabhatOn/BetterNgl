@@ -49,11 +49,10 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: { [key: string]: any }; // Update this type as needed
+  params: { [key: string]: any }; 
 }
 
 export default async function RootLayout({ children, params }: RootLayoutProps) {
-  // Generate the canonical URL based on the current pathname
   const canonicalUrl = `https://tbhfeedback.live${params.path ? `/${params.path}` : ''}`;
 
   const schemaData = {
@@ -82,7 +81,6 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
       <head>
         <meta name="google-site-verification" content="qhgaXcxNf_Nb1XyEIC0my4_ydB7WfJ78yHE76erBx0s" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#1e293b" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="author" content="TBH:Feedback" />
         <meta name="rating" content="General" />

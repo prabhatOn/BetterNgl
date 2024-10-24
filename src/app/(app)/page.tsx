@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import Link from "next/link";
@@ -28,8 +27,6 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-
-    // Define the event handler as a stable reference
     const handleBeforeInstallPrompt = useCallback((e: BeforeInstallPromptEvent) => {
         e.preventDefault();
         setDeferredPrompt(e);
@@ -37,10 +34,8 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        // Listen for the beforeinstallprompt event
         window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
 
-        // Cleanup event listener on component unmount
         return () => {
             window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
         };
@@ -65,7 +60,6 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-black text-white font-sans relative">
-            {/* SEO Header */}
             <Head>
                 <title>TBH: Real Feedback from Real People</title>
                 <meta name="description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
@@ -78,7 +72,6 @@ export default function Home() {
                 <meta property="og:image" content="https://tbhfeedback.live/favicon.png" />
                 <meta property="og:type" content="website" />
 
-                {/* Twitter Card metadata */}
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:title" content="TBH: Real Feedback from Real People" />
                 <meta property="twitter:description" content="Join TBH and experience real, anonymous feedback with top-tier privacy and security features." />
@@ -197,8 +190,6 @@ export default function Home() {
                     </Button>
                 </div>
             </section>
-
-            {/* Install Prompt Section */}
             {showInstallPrompt && (
                 <div className="fixed bottom-4 right-4 z-20 p-4 bg-zinc-800 rounded-lg shadow-lg">
                     <p className="text-white mb-2">Want to install the TBH app?</p>

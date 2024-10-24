@@ -98,7 +98,7 @@ const nextConfig = {
                         test: /[\\/]node_modules[\\/]/,
                         name(module) {
                             const match = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
-                            return match ? `lib.${match[1].replace('@', '')}` : 'lib.unknown'; // Handle null safely
+                            return match ? `lib.${match[1].replace('@', '')}` : 'lib.unknown'; 
                         },
                         chunks: 'all',
                     },
@@ -118,5 +118,4 @@ const nextConfig = {
         formats: ['image/webp'],
     },
 };
-
 module.exports = withPWA(nextConfig);

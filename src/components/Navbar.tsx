@@ -11,7 +11,7 @@ function Navbar() {
     const user: User = session?.user;
 
     const handleLogout = () => {
-        signOut({ callbackUrl: '/' }); // Redirect to the landing page after logout
+        signOut({ callbackUrl: '/' });
     };
 
     return (
@@ -21,7 +21,7 @@ function Navbar() {
                     TBH
                 </Link>
                 {session ? (
-                    <div className="flex items-center space-x-4">
+                    <div className="flex text-white items-center space-x-4">
                         <span className="mr-4">
                             Welcome, {user.username || user.email}
                         </span>
