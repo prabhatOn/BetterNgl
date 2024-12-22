@@ -22,7 +22,7 @@ export async function sendVerificationEmail(
 
     try {
         await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'default@yourdomain.com', // Use environment variable
+            from:'TrueFeedback@tbhfeedback.live', // Use environment variable
             to: email,
             subject: 'TBH Verification Code',
             react: VerificationEmail({ username, otp: verifyCode }),
